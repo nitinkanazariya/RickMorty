@@ -21,7 +21,7 @@ type NavProp = NativeStackNavigationProp<LocationStackParamList, 'LocationList'>
 
 export default function LocationListScreen() {
   const navigation = useNavigation<NavProp>();
-  const { headerTranslate, onScroll, HEADER_HEIGHT, topInset } = useScrollHeader();
+  const { headerTranslate, onScroll, onScrollEnd, HEADER_HEIGHT, topInset } = useScrollHeader();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useInfiniteQuery({
@@ -83,6 +83,8 @@ export default function LocationListScreen() {
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.4}
         onScroll={onScroll}
+        onScrollEndDrag={onScrollEnd}
+        onMomentumScrollEnd={onScrollEnd}
         scrollEventThrottle={16}
         numColumns={layout.locationColumns}
         key={`loc-${layout.locationColumns}`}

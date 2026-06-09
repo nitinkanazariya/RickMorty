@@ -35,7 +35,7 @@ export default function CharacterListScreen() {
   const [showFilter, setShowFilter] = useState(false);
   const debouncedSearch = useDebounce(searchText, 300);
 
-  const { headerTranslate, onScroll, HEADER_HEIGHT, topInset } = useScrollHeader();
+  const { headerTranslate, onScroll, onScrollEnd, HEADER_HEIGHT, topInset } = useScrollHeader();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useInfiniteQuery({
@@ -114,6 +114,8 @@ export default function CharacterListScreen() {
           ListEmptyComponent={renderEmpty}
           contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingHorizontal: spacing.md }}
           onScroll={onScroll}
+          onScrollEndDrag={onScrollEnd}
+          onMomentumScrollEnd={onScrollEnd}
           scrollEventThrottle={16}
         />
       )}

@@ -49,7 +49,7 @@ function EpisodeRow({ episode }: { episode: Episode }) {
 }
 
 export default function EpisodeListScreen() {
-  const { headerTranslate, onScroll, HEADER_HEIGHT, topInset } = useScrollHeader();
+  const { headerTranslate, onScroll, onScrollEnd, HEADER_HEIGHT, topInset } = useScrollHeader();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useInfiniteQuery({
@@ -114,6 +114,8 @@ export default function EpisodeListScreen() {
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.4}
         onScroll={onScroll}
+        onScrollEndDrag={onScrollEnd}
+        onMomentumScrollEnd={onScrollEnd}
         scrollEventThrottle={16}
         contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8 }}
         ListFooterComponent={isFetchingNextPage ? <ActivityIndicator color={colors.accent} style={styles.footer} /> : null}

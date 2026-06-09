@@ -9,6 +9,19 @@ function useScrollHeader() {
 
   const lastScrollY = useRef(0);
   const headerTranslate = useRef(new Animated.Value(0)).current;
+  const isHidden = useRef(false);
+
+  const snapTo = useCallback(
+    (hidden: boolean, instant = false) => {
+      isHidden.current = hidden;
+      Animated.timing(headerTranslate, {
+        toValue: hidden ? -HEADER_HEIGHT : 0,
+        duration: instant ? 0 : 150,
+        useNativeDriver: true,
+      }).start();
+    },
+    [headerTranslate, HEADER_HEIGHT],
+  );
 
   const onScroll = useCallback(
     (event: { nativeEvent: { contentOffset: { y: number } } }) => {
@@ -16,25 +29,29 @@ function useScrollHeader() {
       const diff = currentY - lastScrollY.current;
 
       if (diff > 5 && currentY > HEADER_HEIGHT) {
-        Animated.timing(headerTranslate, {
-          toValue: -HEADER_HEIGHT,
-          duration: 200,
-          useNativeDriver: true,
-        }).start();
+        snapTo(true);
       } else if (diff < -5) {
-        Animated.timing(headerTranslate, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }).start();
+        snapTo(false);
       }
 
       lastScrollY.current = currentY;
     },
-    [headerTranslate, HEADER_HEIGHT],
+    [snapTo, HEADER_HEIGHT],
   );
 
-  return { headerTranslate, onScroll, HEADER_HEIGHT, topInset: insets.top };
+  const onScrollEnd = useCallback(
+    (event: { nativeEvent: { contentOffset: { y: number } } }) => {
+      const currentY = event.nativeEvent.contentOffset.y;
+      if (currentY <= HEADER_HEIGHT) {
+        snapTo(false, true);
+      } else {
+        snapTo(isHidden.current, true);
+      }
+    },
+    [snapTo, HEADER_HEIGHT],
+  );
+
+  return { headerTranslate, onScroll, onScrollEnd, HEADER_HEIGHT, topInset: insets.top };
 }
 
 export default useScrollHeader;
