@@ -27,25 +27,25 @@ export const lightColors = {
 };
 
 export const darkColors = {
-  background: '#060c1a',
-  surface: '#0d1e3d',
-  surfaceElevated: '#0f2455',
-  surfaceDeep: '#07102a',
-  border: '#1e3a6e',
-  accent: '#39ff14',
-  accentDim: '#1a8a06',
-  accentBlue: '#00d4ff',
-  textPrimary: '#f0f8ff',
-  textSecondary: '#a8c8e8',
-  textMuted: '#5a7a9a',
-  textDisabled: '#3a5a7a',
-  textDimmed: '#2a4060',
-  textFaint: '#1a2e48',
-  statusAlive: '#39ff14',
-  statusDead: '#ff4444',
-  statusUnknown: '#8899aa',
-  error: '#ff4444',
-  overlay: 'rgba(6,12,26,0.88)',
+  background: '#04060e',
+  surface: '#080e1e',
+  surfaceElevated: '#0c1428',
+  surfaceDeep: '#020408',
+  border: '#0e2040',
+  accent: '#00ffe1',
+  accentDim: '#00ffe114',
+  accentBlue: '#c084fc',
+  textPrimary: '#e0f2ff',
+  textSecondary: '#7ab4d4',
+  textMuted: '#3d6480',
+  textDisabled: '#1e3a52',
+  textDimmed: '#112030',
+  textFaint: '#080f1a',
+  statusAlive: '#00ff9d',
+  statusDead: '#ff1e5c',
+  statusUnknown: '#a855f7',
+  error: '#ff1e5c',
+  overlay: 'rgba(4,6,14,0.94)',
 };
 
 export const typography = {
@@ -96,18 +96,18 @@ export const lightShadows = {
 
 export const darkShadows = {
   card: {
-    shadowColor: '#39ff14',
+    shadowColor: '#00ffe1',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOpacity: 0.14,
+    shadowRadius: 12,
+    elevation: 8,
   },
   accent: {
-    shadowColor: '#39ff14',
+    shadowColor: '#00ffe1',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.45,
-    shadowRadius: 12,
-    elevation: 10,
+    shadowOpacity: 0.55,
+    shadowRadius: 18,
+    elevation: 14,
   },
 };
 

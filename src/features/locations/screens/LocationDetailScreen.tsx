@@ -15,6 +15,7 @@ import LocationDetailSkeleton from '../components/LocationDetailSkeleton';
 import { typography, spacing, radii, layout } from '../../../theme';
 import type { LocationStackParamList } from '../../../types/navigation';
 import type { Character } from '../../../types/api';
+import { strings } from '../../../constants/strings';
 
 type RouteProp = NativeStackScreenProps<LocationStackParamList, 'LocationDetail'>['route'];
 type NavProp = NativeStackNavigationProp<LocationStackParamList>;
@@ -69,9 +70,9 @@ export default function LocationDetailScreen() {
   if (isError || !location) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.errorText}>Failed to load location</Text>
+        <Text style={styles.errorText}>{strings.locations.errorLoadDetail}</Text>
         <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
-          <Text style={styles.retryText}>Retry</Text>
+          <Text style={styles.retryText}>{strings.common.retry}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -83,30 +84,36 @@ export default function LocationDetailScreen() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <TouchableOpacity style={[styles.backBtn, { paddingTop: insets.top + spacing.sm }]} onPress={() => navigation.goBack()}>
         <ChevronLeftIcon size={20} color={colors.accent} />
-        <Text style={styles.backText}>Back</Text>
+        <Text style={styles.backText}>{strings.common.back}</Text>
       </TouchableOpacity>
       <View style={styles.infoCard}>
         <Text style={styles.name}>{location.name}</Text>
         <Text style={styles.type}>{location.type}</Text>
         <Text style={styles.dimension}>{location.dimension}</Text>
-        <Text style={styles.residents}>{location.residents.length} residents</Text>
-      </View>
-      <Text style={styles.sectionTitle}>Residents</Text>
-      <FlatList
-        data={residents ?? []}
-        keyExtractor={item => String(item.id)}
-        numColumns={layout.residentColumns}
-        key={`res-${layout.residentColumns}`}
-        scrollEnabled={false}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xxxl }}
-        renderItem={({ item }) => (
-          <View style={styles.residentCard}>
-            <Image source={{ uri: item.image }} style={[styles.avatar, { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }]} />
-            <Text style={styles.residentName} numberOfLines={2}>{item.name}</Text>
-          </View>
+        {location.residents.length > 0 && (
+          <Text style={styles.residents}>{strings.locations.residents(location.residents.length)}</Text>
         )}
-      />
+      </View>
+      {location.residents.length > 0 && (
+        <>
+          <Text style={styles.sectionTitle}>{strings.locations.residentsSection}</Text>
+          <FlatList
+            data={residents ?? []}
+            keyExtractor={item => String(item.id)}
+            numColumns={layout.residentColumns}
+            key={`res-${layout.residentColumns}`}
+            scrollEnabled={false}
+            columnWrapperStyle={styles.row}
+            contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xxxl }}
+            renderItem={({ item }) => (
+              <View style={styles.residentCard}>
+                <Image source={{ uri: item.image }} style={[styles.avatar, { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }]} />
+                <Text style={styles.residentName} numberOfLines={2}>{item.name}</Text>
+              </View>
+            )}
+          />
+        </>
+      )}
     </ScrollView>
   );
 }

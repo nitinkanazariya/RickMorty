@@ -18,6 +18,7 @@ import EpisodeChip from '../components/EpisodeChip';
 import CharacterDetailSkeleton from '../components/CharacterDetailSkeleton';
 import { typography, spacing, radii, layout } from '../../../theme';
 import type { CharacterStackParamList } from '../../../types/navigation';
+import { strings } from '../../../constants/strings';
 
 type RouteProp = NativeStackScreenProps<CharacterStackParamList, 'CharacterDetail'>['route'];
 type NavProp = NativeStackNavigationProp<CharacterStackParamList>;
@@ -28,18 +29,15 @@ function makeStyles(c: Colors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: c.background },
     centered: { justifyContent: 'center', alignItems: 'center', paddingVertical: spacing.xxxl },
-    backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.lg, paddingBottom: spacing.sm },
+    topBar: {
+      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+      paddingHorizontal: spacing.lg, paddingBottom: spacing.sm,
+    },
+    backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
     backText: { color: c.accent, fontSize: typography.lg },
+    starBtn: { padding: spacing.sm },
     imageWrapper: { alignItems: 'center', marginVertical: spacing.lg },
     avatarRing: { overflow: 'hidden', borderWidth: 3, borderColor: c.accent },
-    favBtn: {
-      flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'center',
-      paddingHorizontal: 28, paddingVertical: 10, borderRadius: radii.full,
-      backgroundColor: c.surface, borderWidth: 1, borderColor: c.accent, marginBottom: spacing.xl,
-    },
-    favBtnActive: { backgroundColor: c.accent, borderColor: c.accent },
-    favBtnText: { color: c.accent, fontWeight: '700', fontSize: typography.md },
-    favBtnTextActive: { color: c.textPrimary },
     infoCard: {
       marginHorizontal: spacing.lg, backgroundColor: c.surface,
       borderRadius: radii.xl, padding: spacing.xl, marginBottom: spacing.xl,
@@ -79,7 +77,8 @@ export default function CharacterDetailScreen() {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const styles = useMemo(() => makeStyles(colors), [colors]);
-  const { id, image } = route.params;
+  const starScale = useRef(new Animated.Value(1)).current;
+  const { id, image, character: cachedCharacter } = route.params;
 
   const favourites = useAppSelector(s => s.favourites.items);
   const isFavourite = favourites.some(c => c.id === id);
@@ -87,10 +86,17 @@ export default function CharacterDetailScreen() {
   const { data: character, isLoading, isError, refetch } = useQuery({
     queryKey: ['character', id],
     queryFn: () => fetchCharacterById(id),
+    initialData: cachedCharacter,
+    staleTime: cachedCharacter ? 5 * 60 * 1000 : 0,
   });
 
   const toggleFavourite = () => {
     if (!character) return;
+    Animated.sequence([
+      Animated.timing(starScale, { toValue: 1.45, duration: 120, useNativeDriver: true }),
+      Animated.timing(starScale, { toValue: 0.85, duration: 80, useNativeDriver: true }),
+      Animated.timing(starScale, { toValue: 1, duration: 100, useNativeDriver: true }),
+    ]).start();
     if (isFavourite) dispatch(removeFavouriteById(id));
     else dispatch(addFavourite(character));
   };
@@ -102,11 +108,20 @@ export default function CharacterDetailScreen() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Animated.View style={headerAnim}>
-        <TouchableOpacity style={[styles.backBtn, { paddingTop: insets.top + spacing.sm }]} onPress={() => navigation.goBack()}>
-          <ChevronLeftIcon size={20} color={colors.accent} />
-          <Text style={styles.backText}>Back</Text>
-        </TouchableOpacity>
+      <Animated.View style={[headerAnim, { paddingTop: insets.top + spacing.sm }]}>
+        <View style={styles.topBar}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+            <ChevronLeftIcon size={20} color={colors.accent} />
+            <Text style={styles.backText}>{strings.common.back}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleFavourite} style={styles.starBtn}>
+            <Animated.View style={{ transform: [{ scale: starScale }] }}>
+              {isFavourite
+                ? <StarIconSolid size={28} color={colors.accent} />
+                : <StarIcon size={28} color={colors.textDisabled} />}
+            </Animated.View>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
 
       <View style={styles.imageWrapper}>
@@ -116,20 +131,13 @@ export default function CharacterDetailScreen() {
       </View>
 
       <Animated.View style={bodyAnim}>
-        <TouchableOpacity style={[styles.favBtn, isFavourite && styles.favBtnActive]} onPress={toggleFavourite}>
-          {isFavourite ? <StarIconSolid size={18} color={colors.textPrimary} /> : <StarIcon size={18} color={colors.accent} />}
-          <Text style={[styles.favBtnText, isFavourite && styles.favBtnTextActive]}>
-            {isFavourite ? 'Saved' : 'Save'}
-          </Text>
-        </TouchableOpacity>
-
         {isLoading ? (
           <CharacterDetailSkeleton />
         ) : isError || !character ? (
           <View style={styles.centered}>
-            <Text style={styles.errorText}>Failed to load character</Text>
+            <Text style={styles.errorText}>{strings.characters.errorLoadDetail}</Text>
             <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
-              <Text style={styles.retryText}>Retry</Text>
+              <Text style={styles.retryText}>{strings.common.retry}</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -141,7 +149,7 @@ export default function CharacterDetailScreen() {
                 <Text style={styles.statusText}>{character.status}</Text>
               </View>
               <View style={styles.grid}>
-                {[['Species', character.species], ['Gender', character.gender], ['Type', character.type || 'N/A'], ['Origin', character.origin.name], ['Location', character.location.name]].map(([label, value]) => (
+                {[[strings.characters.labelSpecies, character.species], [strings.characters.labelGender, character.gender], [strings.characters.labelType, character.type || strings.common.na], [strings.characters.labelOrigin, character.origin.name], [strings.characters.labelLocation, character.location.name]].map(([label, value]) => (
                   <View key={label} style={styles.gridItem}>
                     <Text style={styles.gridLabel}>{label}</Text>
                     <Text style={styles.gridValue}>{value}</Text>
@@ -150,7 +158,7 @@ export default function CharacterDetailScreen() {
               </View>
             </View>
             <View style={styles.episodesSection}>
-              <Text style={styles.sectionTitle}>Episodes ({character.episode.length})</Text>
+              <Text style={styles.sectionTitle}>{strings.characters.episodes(character.episode.length)}</Text>
               <FlatList
                 data={character.episode} horizontal keyExtractor={item => item}
                 renderItem={({ item }) => <EpisodeChip url={item} />}

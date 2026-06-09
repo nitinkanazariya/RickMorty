@@ -31,7 +31,7 @@ function AppContent() {
     <NavigationContainer theme={navTheme}>
       <StatusBar
         barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={colors.background}
+        backgroundColor={colors.surfaceElevated}
         translucent={false}
       />
       <RootNavigator />

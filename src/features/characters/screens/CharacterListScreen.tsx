@@ -20,12 +20,14 @@ import { setStatusFilter, setGenderFilter } from '../../../store/slices/uiSlice'
 import { typography, spacing, radii } from '../../../theme';
 import type { CharacterStackParamList } from '../../../types/navigation';
 import type { Character } from '../../../types/api';
+import { strings } from '../../../constants/strings';
 
 type NavProp = NativeStackNavigationProp<CharacterStackParamList, 'CharacterList'>;
 
 function makeStyles(c: Colors, s: Shadows) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: c.background },
+    statusBarBg: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 11, backgroundColor: c.surfaceElevated },
     header: {
       position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10,
       backgroundColor: c.surfaceElevated, flexDirection: 'row',
@@ -92,14 +94,14 @@ export default function CharacterListScreen() {
     if (isError) {
       return (
         <View style={styles.centered}>
-          <Text style={styles.errorText}>Failed to load characters</Text>
+          <Text style={styles.errorText}>{strings.characters.errorLoad}</Text>
           <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
-            <Text style={styles.retryText}>Retry</Text>
+            <Text style={styles.retryText}>{strings.common.retry}</Text>
           </TouchableOpacity>
         </View>
       );
     }
-    return <View style={styles.centered}><Text style={styles.emptyText}>No characters found</Text></View>;
+    return <View style={styles.centered}><Text style={styles.emptyText}>{strings.characters.empty}</Text></View>;
   };
 
   return (
@@ -107,7 +109,7 @@ export default function CharacterListScreen() {
       <Animated.View style={[styles.header, { height: HEADER_HEIGHT, paddingTop: topInset, transform: [{ translateY: headerTranslate }] }]}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search characters..."
+          placeholder={strings.characters.searchPlaceholder}
           placeholderTextColor={colors.textDisabled}
           value={searchText}
           onChangeText={setSearchText}
@@ -119,6 +121,7 @@ export default function CharacterListScreen() {
           {isDark ? <SunIcon size={20} color={colors.accent} /> : <MoonIcon size={20} color={colors.accent} />}
         </TouchableOpacity>
       </Animated.View>
+      <View style={[styles.statusBarBg, { height: topInset }]} />
 
       {isLoading ? (
         <CharacterSkeleton />

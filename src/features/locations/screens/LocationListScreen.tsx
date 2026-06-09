@@ -14,6 +14,7 @@ import LocationSkeleton from '../components/LocationSkeleton';
 import { typography, spacing, radii, layout } from '../../../theme';
 import type { LocationStackParamList } from '../../../types/navigation';
 import type { Location } from '../../../types/api';
+import { strings } from '../../../constants/strings';
 
 type NavProp = NativeStackNavigationProp<LocationStackParamList, 'LocationList'>;
 
@@ -21,6 +22,7 @@ function makeStyles(c: Colors, s: Shadows) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: c.background },
     centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: c.background },
+    statusBarBg: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 11, backgroundColor: c.surfaceElevated },
     header: {
       position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10,
       backgroundColor: c.surfaceElevated, flexDirection: 'row', alignItems: 'center',
@@ -80,7 +82,7 @@ export default function LocationListScreen() {
         <View style={styles.cardHeader}><Text style={styles.name} numberOfLines={2}>{item.name}</Text></View>
         <View style={styles.typePill}><Text style={styles.type} numberOfLines={1}>{item.type}</Text></View>
         <Text style={styles.dimension} numberOfLines={2}>{item.dimension}</Text>
-        <Text style={styles.residents}>{item.residents.length} residents</Text>
+        <Text style={styles.residents}>{strings.locations.residents(item.residents.length)}</Text>
       </TouchableOpacity>
     ),
     [navigation, styles],
@@ -89,19 +91,20 @@ export default function LocationListScreen() {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.header, { height: HEADER_HEIGHT, paddingTop: topInset, transform: [{ translateY: headerTranslate }] }]}>
-        <Text style={styles.headerTitle}>Locations</Text>
+        <Text style={styles.headerTitle}>{strings.locations.title}</Text>
         <TouchableOpacity style={styles.themeBtn} onPress={toggleTheme}>
           {isDark ? <SunIcon size={18} color={colors.accent} /> : <MoonIcon size={18} color={colors.accent} />}
         </TouchableOpacity>
       </Animated.View>
+      <View style={[styles.statusBarBg, { height: topInset }]} />
 
       {isLoading ? (
         <LocationSkeleton />
       ) : isError ? (
         <View style={styles.centered}>
-          <Text style={styles.errorText}>Failed to load locations</Text>
+          <Text style={styles.errorText}>{strings.locations.errorLoad}</Text>
           <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
-            <Text style={styles.retryText}>Retry</Text>
+            <Text style={styles.retryText}>{strings.common.retry}</Text>
           </TouchableOpacity>
         </View>
       ) : (

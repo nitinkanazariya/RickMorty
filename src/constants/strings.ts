@@ -1,0 +1,47 @@
+export const strings = {
+  common: {
+    back: 'Back',
+    retry: 'Retry',
+    any: 'Any',
+    na: 'N/A',
+  },
+  characters: {
+    searchPlaceholder: 'Search characters...',
+    errorLoad: 'Failed to load characters',
+    empty: 'No characters found',
+    lastSeen: 'LAST SEEN',
+    statusAlive: 'ALIVE',
+    statusDead: 'DEAD',
+    statusUnknown: 'UNKNOWN',
+    errorLoadDetail: 'Failed to load character',
+    labelSpecies: 'Species',
+    labelGender: 'Gender',
+    labelType: 'Type',
+    labelOrigin: 'Origin',
+    labelLocation: 'Location',
+    episodes: (count: number) => `Episodes (${count})`,
+  },
+  episodes: {
+    title: 'Episodes',
+    errorLoad: 'Failed to load episodes',
+  },
+  locations: {
+    title: 'Locations',
+    errorLoad: 'Failed to load locations',
+    errorLoadDetail: 'Failed to load location',
+    residents: (count: number) => `${count} residents`,
+    residentsSection: 'Residents',
+  },
+  favourites: {
+    title: 'Favourites',
+    emptyTitle: 'No favourites yet',
+    emptySubtitle: 'Tap the star on any character to add them here',
+  },
+  filter: {
+    title: 'Filter Characters',
+    labelStatus: 'Status',
+    labelGender: 'Gender',
+    cancel: 'Cancel',
+    apply: 'Apply',
+  },
+};

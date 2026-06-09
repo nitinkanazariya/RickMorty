@@ -3,6 +3,7 @@ import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from '../../../theme/ThemeContext';
 import type { Colors } from '../../../theme/ThemeContext';
 import { typography, spacing, radii } from '../../../theme';
+import { strings } from '../../../constants/strings';
 
 interface Props {
   visible: boolean;
@@ -58,29 +59,29 @@ export default function FilterModal({ visible, currentStatus, currentGender, onA
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <View style={styles.handle} />
-          <Text style={styles.title}>Filter Characters</Text>
-          <Text style={styles.label}>Status</Text>
+          <Text style={styles.title}>{strings.filter.title}</Text>
+          <Text style={styles.label}>{strings.filter.labelStatus}</Text>
           <View style={styles.options}>
             {STATUS_OPTIONS.map(opt => (
               <TouchableOpacity key={opt || 'any-status'} style={[styles.chip, status === opt && styles.chipActive]} onPress={() => setStatus(opt)}>
-                <Text style={[styles.chipText, status === opt && styles.chipTextActive]}>{opt || 'Any'}</Text>
+                <Text style={[styles.chipText, status === opt && styles.chipTextActive]}>{opt || strings.common.any}</Text>
               </TouchableOpacity>
             ))}
           </View>
-          <Text style={styles.label}>Gender</Text>
+          <Text style={styles.label}>{strings.filter.labelGender}</Text>
           <View style={styles.options}>
             {GENDER_OPTIONS.map(opt => (
               <TouchableOpacity key={opt || 'any-gender'} style={[styles.chip, gender === opt && styles.chipActive]} onPress={() => setGender(opt)}>
-                <Text style={[styles.chipText, gender === opt && styles.chipTextActive]}>{opt || 'Any'}</Text>
+                <Text style={[styles.chipText, gender === opt && styles.chipTextActive]}>{opt || strings.common.any}</Text>
               </TouchableOpacity>
             ))}
           </View>
           <View style={styles.actions}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>{strings.filter.cancel}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.applyBtn} onPress={() => onApply(status, gender)}>
-              <Text style={styles.applyText}>Apply</Text>
+              <Text style={styles.applyText}>{strings.filter.apply}</Text>
             </TouchableOpacity>
           </View>
         </View>

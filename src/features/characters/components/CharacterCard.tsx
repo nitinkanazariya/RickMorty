@@ -1,14 +1,44 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useMemo, useState, useRef } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import {
+  HeartIcon,
+  XCircleIcon,
+  QuestionMarkCircleIcon,
+} from 'react-native-heroicons/solid';
 import { useTheme } from '../../../theme/ThemeContext';
 import type { Colors, Shadows } from '../../../theme/ThemeContext';
 import { typography, spacing, radii, layout } from '../../../theme';
 import type { Character } from '../../../types/api';
+import { strings } from '../../../constants/strings';
 
 interface Props {
   character: Character;
   onPress: () => void;
 }
+
+const STATUS_META = {
+  Alive: {
+    Icon: HeartIcon,
+    label: strings.characters.statusAlive,
+    bg: '#00c96c',
+    textColor: '#001a0d',
+    stripe: '#00ff9d',
+  },
+  Dead: {
+    Icon: XCircleIcon,
+    label: strings.characters.statusDead,
+    bg: '#c41c3c',
+    textColor: '#ffeaef',
+    stripe: '#ff1e5c',
+  },
+  unknown: {
+    Icon: QuestionMarkCircleIcon,
+    label: strings.characters.statusUnknown,
+    bg: '#6d28d9',
+    textColor: '#f0e6ff',
+    stripe: '#a855f7',
+  },
+};
 
 function makeStyles(c: Colors, s: Shadows) {
   return StyleSheet.create({
@@ -22,25 +52,21 @@ function makeStyles(c: Colors, s: Shadows) {
       borderColor: c.border,
       ...s.card,
     },
-    accentBar: { width: 4 },
+    statusStripe: { width: 4 },
     imageWrapper: { position: 'relative' },
     imagePlaceholder: { backgroundColor: c.surfaceDeep, position: 'absolute' },
     hidden: { opacity: 0, position: 'absolute' },
-    statusBadge: {
+    badgeRow: {
       position: 'absolute',
-      bottom: 6,
-      left: 4,
-      right: 4,
-      flexDirection: 'row',
+      bottom: 0, left: 0, right: 0,
       alignItems: 'center',
-      gap: 3,
-      borderRadius: radii.full,
-      borderWidth: 1,
-      paddingHorizontal: 5,
-      paddingVertical: 2,
+      paddingVertical: 5,
     },
-    statusDot: { width: 6, height: 6, borderRadius: radii.full },
-    statusBadgeText: { fontSize: typography.xs, fontWeight: '700' },
+    badge: {
+      flexDirection: 'row', alignItems: 'center', gap: 4,
+      paddingHorizontal: 10, paddingVertical: 3, borderRadius: radii.full,
+    },
+    badgeText: { fontSize: 9, fontWeight: '900', letterSpacing: 1.4 },
     info: { flex: 1, padding: spacing.md, justifyContent: 'center' },
     name: { color: c.textPrimary, fontWeight: '800', fontSize: typography.md, marginBottom: 2 },
     species: { color: c.accentBlue, fontSize: typography.sm, fontWeight: '600', marginBottom: spacing.sm },
@@ -50,37 +76,76 @@ function makeStyles(c: Colors, s: Shadows) {
   });
 }
 
-const SharedView = View as React.ComponentType<React.ComponentProps<typeof View> & { sharedTransitionTag?: string }>;
+const SharedView = View as React.ComponentType<
+  React.ComponentProps<typeof View> & { sharedTransitionTag?: string }
+>;
 
 export default function CharacterCard({ character, onPress }: Props) {
   const { colors, shadows } = useTheme();
   const styles = useMemo(() => makeStyles(colors, shadows), [colors, shadows]);
   const [imageLoaded, setImageLoaded] = useState(false);
   const size = layout.cardImageSize;
-  const statusColor = { Alive: colors.statusAlive, Dead: colors.statusDead, unknown: colors.statusUnknown }[character.status] ?? colors.statusUnknown;
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const meta = STATUS_META[character.status as keyof typeof STATUS_META] ?? STATUS_META.unknown;
+  const { Icon, label, bg, textColor, stripe } = meta;
+
+  const onPressIn = () => {
+    Animated.spring(scale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+      tension: 300,
+      friction: 10,
+    }).start();
+  };
+
+  const onPressOut = () => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 180,
+      friction: 6,
+    }).start();
+  };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
-      <View style={[styles.accentBar, { backgroundColor: statusColor }]} />
-      <SharedView style={[styles.imageWrapper, { width: size, height: size }]} sharedTransitionTag={`char-img-${character.id}`}>
-        {!imageLoaded && <View style={[styles.imagePlaceholder, { width: size, height: size }]} />}
-        <Image
-          source={{ uri: character.image }}
-          style={[{ width: size, height: size }, !imageLoaded && styles.hidden]}
-          onLoad={() => setImageLoaded(true)}
-        />
-        <View style={[styles.statusBadge, { backgroundColor: statusColor + '28', borderColor: statusColor }]}>
-          <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
-          <Text style={[styles.statusBadgeText, { color: statusColor }]}>{character.status}</Text>
+    <TouchableOpacity
+      onPress={onPress}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
+      activeOpacity={1}
+    >
+      <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
+        <View style={[styles.statusStripe, { backgroundColor: stripe }]} />
+
+        <SharedView
+          style={[styles.imageWrapper, { width: size, height: size }]}
+          sharedTransitionTag={`char-img-${character.id}`}
+        >
+          {!imageLoaded && (
+            <View style={[styles.imagePlaceholder, { width: size, height: size }]} />
+          )}
+          <Image
+            source={{ uri: character.image }}
+            style={[{ width: size, height: size }, !imageLoaded && styles.hidden]}
+            onLoad={() => setImageLoaded(true)}
+          />
+          <View style={styles.badgeRow}>
+            <View style={[styles.badge, { backgroundColor: bg }]}>
+              <Icon size={9} color={textColor} />
+              <Text style={[styles.badgeText, { color: textColor }]}>{label}</Text>
+            </View>
+          </View>
+        </SharedView>
+
+        <View style={styles.info}>
+          <Text style={styles.name} numberOfLines={1}>{character.name}</Text>
+          <Text style={styles.species} numberOfLines={1}>{character.species}</Text>
+          <View style={styles.divider} />
+          <Text style={styles.label}>{strings.characters.lastSeen}</Text>
+          <Text style={styles.locationText} numberOfLines={2}>{character.location.name}</Text>
         </View>
-      </SharedView>
-      <View style={styles.info}>
-        <Text style={styles.name} numberOfLines={1}>{character.name}</Text>
-        <Text style={styles.species} numberOfLines={1}>{character.species}</Text>
-        <View style={styles.divider} />
-        <Text style={styles.label}>Last seen</Text>
-        <Text style={styles.locationText} numberOfLines={2}>{character.location.name}</Text>
-      </View>
+      </Animated.View>
     </TouchableOpacity>
   );
 }
