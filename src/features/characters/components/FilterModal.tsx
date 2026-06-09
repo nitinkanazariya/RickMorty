@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { colors, typography, spacing, radii } from '../../../theme';
 
 interface Props {
   visible: boolean;
@@ -71,42 +66,42 @@ export default function FilterModal({ visible, currentStatus, currentGender, onA
 }
 
 const styles = StyleSheet.create({
-  overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)' },
+  overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: colors.overlay },
   sheet: {
-    backgroundColor: '#1a1a2e',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 24,
+    backgroundColor: colors.surfaceElevated,
+    borderTopLeftRadius: radii.xl + 4,
+    borderTopRightRadius: radii.xl + 4,
+    padding: spacing.xxl,
   },
-  title: { color: '#fff', fontSize: 18, fontWeight: '700', marginBottom: 20 },
-  label: { color: '#9ca3af', fontSize: 13, marginBottom: 8 },
-  options: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 },
+  title: { color: colors.textPrimary, fontSize: typography.xl, fontWeight: '700', marginBottom: spacing.xl },
+  label: { color: colors.textMuted, fontSize: typography.sm, marginBottom: spacing.sm },
+  options: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.xl },
   chip: {
     paddingHorizontal: 14,
     paddingVertical: 7,
-    borderRadius: 20,
-    backgroundColor: '#16213e',
+    borderRadius: radii.full,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.surfaceDeep,
   },
-  chipActive: { backgroundColor: '#00b4d8', borderColor: '#00b4d8' },
-  chipText: { color: '#9ca3af', fontSize: 13 },
-  chipTextActive: { color: '#fff', fontWeight: '600' },
-  actions: { flexDirection: 'row', gap: 12, marginTop: 4 },
+  chipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
+  chipText: { color: colors.textMuted, fontSize: typography.sm },
+  chipTextActive: { color: colors.textPrimary, fontWeight: '600' },
+  actions: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.xs },
   cancelBtn: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
-    backgroundColor: '#16213e',
+    paddingVertical: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     alignItems: 'center',
   },
-  cancelText: { color: '#9ca3af', fontWeight: '600' },
+  cancelText: { color: colors.textMuted, fontWeight: '600' },
   applyBtn: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
-    backgroundColor: '#00b4d8',
+    paddingVertical: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.accent,
     alignItems: 'center',
   },
-  applyText: { color: '#fff', fontWeight: '700' },
+  applyText: { color: colors.textPrimary, fontWeight: '700' },
 });

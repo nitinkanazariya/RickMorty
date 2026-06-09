@@ -9,13 +9,8 @@ import {
 } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useAppDispatch';
 import { removeFavouriteById } from '../../../store/slices/favouritesSlice';
+import { colors, typography, spacing, radii, layout, statusColors } from '../../../theme';
 import type { Character } from '../../../types/api';
-
-const STATUS_COLORS: Record<string, string> = {
-  Alive: '#22c55e',
-  Dead: '#ef4444',
-  unknown: '#6b7280',
-};
 
 export default function FavouritesScreen() {
   const dispatch = useAppDispatch();
@@ -42,16 +37,12 @@ export default function FavouritesScreen() {
     <View style={styles.card}>
       <Image source={{ uri: item.image }} style={styles.avatar} />
       <View style={styles.info}>
-        <Text style={styles.name} numberOfLines={1}>
-          {item.name}
-        </Text>
+        <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
         <View style={styles.statusRow}>
-          <View style={[styles.dot, { backgroundColor: STATUS_COLORS[item.status] ?? '#6b7280' }]} />
+          <View style={[styles.dot, { backgroundColor: statusColors[item.status] ?? colors.statusUnknown }]} />
           <Text style={styles.statusText}>{item.status} — {item.species}</Text>
         </View>
-        <Text style={styles.location} numberOfLines={1}>
-          {item.location.name}
-        </Text>
+        <Text style={styles.location} numberOfLines={1}>{item.location.name}</Text>
       </View>
       <TouchableOpacity style={styles.removeBtn} onPress={() => handleRemove(item.id)}>
         <Text style={styles.removeText}>✕</Text>
@@ -61,7 +52,7 @@ export default function FavouritesScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { height: layout.headerHeight }]}>
         <Text style={styles.headerTitle}>Favourites</Text>
       </View>
       <FlatList
@@ -75,40 +66,39 @@ export default function FavouritesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f1a' },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
-    height: 60,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surfaceElevated,
     justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  list: { padding: 12 },
+  headerTitle: { color: colors.textPrimary, fontSize: typography.xxl, fontWeight: '700' },
+  list: { padding: spacing.md },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#16213e',
-    borderRadius: 12,
-    marginBottom: 12,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    marginBottom: spacing.md,
     overflow: 'hidden',
     alignItems: 'center',
   },
-  avatar: { width: 80, height: 80, backgroundColor: '#0f3460' },
-  info: { flex: 1, paddingHorizontal: 12 },
-  name: { color: '#fff', fontWeight: '700', fontSize: 15, marginBottom: 4 },
-  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  dot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
-  statusText: { color: '#9ca3af', fontSize: 12 },
-  location: { color: '#6b7280', fontSize: 12 },
-  removeBtn: { padding: 16 },
-  removeText: { color: '#ef4444', fontSize: 16, fontWeight: '700' },
+  avatar: { width: 80, height: 80, backgroundColor: colors.surfaceDeep },
+  info: { flex: 1, paddingHorizontal: spacing.md },
+  name: { color: colors.textPrimary, fontWeight: '700', fontSize: typography.md, marginBottom: spacing.xs },
+  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs },
+  dot: { width: 8, height: 8, borderRadius: radii.full, marginRight: 6 },
+  statusText: { color: colors.textMuted, fontSize: typography.sm },
+  location: { color: colors.textDisabled, fontSize: typography.sm },
+  removeBtn: { padding: spacing.lg },
+  removeText: { color: colors.error, fontSize: typography.lg, fontWeight: '700' },
   empty: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0f0f1a',
-    padding: 32,
+    backgroundColor: colors.background,
+    padding: spacing.xxxl,
   },
-  emptyIcon: { fontSize: 64, color: '#374151', marginBottom: 16 },
-  emptyTitle: { color: '#9ca3af', fontSize: 20, fontWeight: '700', marginBottom: 8 },
-  emptySubtitle: { color: '#4b5563', fontSize: 14, textAlign: 'center' },
+  emptyIcon: { fontSize: 64, color: colors.textFaint, marginBottom: spacing.lg },
+  emptyTitle: { color: colors.textMuted, fontSize: typography.xxl, fontWeight: '700', marginBottom: spacing.sm },
+  emptySubtitle: { color: colors.textDimmed, fontSize: typography.base, textAlign: 'center' },
 });

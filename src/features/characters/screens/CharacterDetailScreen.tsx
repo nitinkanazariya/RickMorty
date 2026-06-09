@@ -13,40 +13,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { fetchCharacterById } from '../../../services/characterService';
-import { fetchEpisodeById } from '../../../services/episodeService';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useAppDispatch';
 import { addFavourite, removeFavouriteById } from '../../../store/slices/favouritesSlice';
+import EpisodeChip from '../components/EpisodeChip';
+import { colors, typography, spacing, radii, layout, statusColors } from '../../../theme';
 import type { CharacterStackParamList } from '../../../types/navigation';
-import type { Episode } from '../../../types/api';
 
 type RouteProp = NativeStackScreenProps<CharacterStackParamList, 'CharacterDetail'>['route'];
 type NavProp = NativeStackNavigationProp<CharacterStackParamList>;
-
-const STATUS_COLORS: Record<string, string> = {
-  Alive: '#22c55e',
-  Dead: '#ef4444',
-  unknown: '#6b7280',
-};
-
-function EpisodeChip({ url }: { url: string }) {
-  const id = Number(url.split('/').pop());
-  const { data } = useQuery<Episode>({
-    queryKey: ['episode', id],
-    queryFn: () => fetchEpisodeById(id),
-    enabled: !!id,
-  });
-
-  if (!data) return <View style={styles.episodeChipSkeleton} />;
-
-  return (
-    <View style={styles.episodeChip}>
-      <Text style={styles.episodeCode}>{data.episode}</Text>
-      <Text style={styles.episodeName} numberOfLines={1}>
-        {data.name}
-      </Text>
-    </View>
-  );
-}
 
 export default function CharacterDetailScreen() {
   const route = useRoute<RouteProp>();
@@ -65,17 +39,14 @@ export default function CharacterDetailScreen() {
 
   const toggleFavourite = () => {
     if (!character) return;
-    if (isFavourite) {
-      dispatch(removeFavouriteById(id));
-    } else {
-      dispatch(addFavourite(character));
-    }
+    if (isFavourite) dispatch(removeFavouriteById(id));
+    else dispatch(addFavourite(character));
   };
 
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#00b4d8" />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -91,6 +62,8 @@ export default function CharacterDetailScreen() {
     );
   }
 
+  const avatarSize = layout.detailAvatarSize;
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
@@ -98,10 +71,12 @@ export default function CharacterDetailScreen() {
       </TouchableOpacity>
 
       <View style={styles.imageWrapper}>
-        {!imageLoaded && <View style={styles.imagePlaceholder} />}
+        {!imageLoaded && (
+          <View style={[styles.imagePlaceholder, { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }]} />
+        )}
         <Image
           source={{ uri: character.image }}
-          style={styles.avatar}
+          style={[styles.avatar, { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }]}
           onLoad={() => setImageLoaded(true)}
         />
       </View>
@@ -115,10 +90,9 @@ export default function CharacterDetailScreen() {
       <View style={styles.infoCard}>
         <Text style={styles.characterName}>{character.name}</Text>
         <View style={styles.statusRow}>
-          <View style={[styles.dot, { backgroundColor: STATUS_COLORS[character.status] ?? '#6b7280' }]} />
+          <View style={[styles.dot, { backgroundColor: statusColors[character.status] ?? colors.statusUnknown }]} />
           <Text style={styles.statusText}>{character.status}</Text>
         </View>
-
         <View style={styles.grid}>
           {[
             ['Species', character.species],
@@ -143,7 +117,7 @@ export default function CharacterDetailScreen() {
           keyExtractor={item => item}
           renderItem={({ item }) => <EpisodeChip url={item} />}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, gap: 10 }}
+          contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: 10 }}
         />
       </View>
     </ScrollView>
@@ -151,57 +125,43 @@ export default function CharacterDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f1a' },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0f0f1a' },
-  backBtn: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
-  backText: { color: '#00b4d8', fontSize: 16 },
-  imageWrapper: { alignItems: 'center', marginVertical: 16 },
-  avatar: { width: 180, height: 180, borderRadius: 90, borderWidth: 3, borderColor: '#00b4d8' },
-  imagePlaceholder: { width: 180, height: 180, borderRadius: 90, backgroundColor: '#16213e', position: 'absolute' },
+  container: { flex: 1, backgroundColor: colors.background },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
+  backBtn: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
+  backText: { color: colors.accent, fontSize: typography.lg },
+  imageWrapper: { alignItems: 'center', marginVertical: spacing.lg },
+  imagePlaceholder: { backgroundColor: colors.surface, position: 'absolute' },
+  avatar: { borderWidth: 3, borderColor: colors.accent },
   favBtn: {
     alignSelf: 'center',
     paddingHorizontal: 28,
     paddingVertical: 10,
-    borderRadius: 24,
-    backgroundColor: '#16213e',
+    borderRadius: radii.full,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#00b4d8',
-    marginBottom: 20,
+    borderColor: colors.accent,
+    marginBottom: spacing.xl,
   },
-  favBtnActive: { backgroundColor: '#00b4d8' },
-  favBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  favBtnActive: { backgroundColor: colors.accent },
+  favBtnText: { color: colors.textPrimary, fontWeight: '700', fontSize: typography.md },
   infoCard: {
-    marginHorizontal: 16,
-    backgroundColor: '#16213e',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
+    marginHorizontal: spacing.lg,
+    backgroundColor: colors.surface,
+    borderRadius: radii.xl,
+    padding: spacing.xl,
+    marginBottom: spacing.xl,
   },
-  characterName: { color: '#fff', fontSize: 22, fontWeight: '800', marginBottom: 8 },
-  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
-  dot: { width: 10, height: 10, borderRadius: 5, marginRight: 8 },
-  statusText: { color: '#9ca3af', fontSize: 14 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  characterName: { color: colors.textPrimary, fontSize: typography.xxxl, fontWeight: '800', marginBottom: spacing.sm },
+  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.lg },
+  dot: { width: 10, height: 10, borderRadius: radii.full, marginRight: spacing.sm },
+  statusText: { color: colors.textMuted, fontSize: typography.base },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   gridItem: { width: '45%' },
-  gridLabel: { color: '#6b7280', fontSize: 12, marginBottom: 2 },
-  gridValue: { color: '#d1d5db', fontSize: 14, fontWeight: '500' },
-  episodesSection: { marginBottom: 32 },
-  sectionTitle: { color: '#fff', fontSize: 17, fontWeight: '700', paddingHorizontal: 16, marginBottom: 12 },
-  episodeChip: {
-    backgroundColor: '#16213e',
-    borderRadius: 10,
-    padding: 12,
-    width: 130,
-  },
-  episodeChipSkeleton: {
-    width: 130,
-    height: 56,
-    backgroundColor: '#16213e',
-    borderRadius: 10,
-  },
-  episodeCode: { color: '#00b4d8', fontSize: 12, fontWeight: '700', marginBottom: 4 },
-  episodeName: { color: '#d1d5db', fontSize: 12 },
-  errorText: { color: '#ef4444', fontSize: 16, marginBottom: 12 },
-  retryBtn: { backgroundColor: '#00b4d8', paddingHorizontal: 24, paddingVertical: 10, borderRadius: 8 },
-  retryText: { color: '#fff', fontWeight: '600' },
+  gridLabel: { color: colors.textDisabled, fontSize: typography.sm, marginBottom: 2 },
+  gridValue: { color: colors.textSecondary, fontSize: typography.base, fontWeight: '500' },
+  episodesSection: { marginBottom: spacing.xxxl },
+  sectionTitle: { color: colors.textPrimary, fontSize: typography.xl, fontWeight: '700', paddingHorizontal: spacing.lg, marginBottom: spacing.md },
+  errorText: { color: colors.error, fontSize: typography.lg, marginBottom: spacing.md },
+  retryBtn: { backgroundColor: colors.accent, paddingHorizontal: spacing.xxl, paddingVertical: 10, borderRadius: radii.sm },
+  retryText: { color: colors.textPrimary, fontWeight: '600' },
 });

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleSheet } from 'react-native';
+import { colors, spacing, radii, layout } from '../../../theme';
 
 function SkeletonItem() {
   const opacity = useRef(new Animated.Value(0.3)).current;
@@ -13,9 +14,11 @@ function SkeletonItem() {
     ).start();
   }, [opacity]);
 
+  const size = layout.cardImageSize;
+
   return (
-    <Animated.View style={[styles.card, { opacity }]}>
-      <View style={styles.image} />
+    <Animated.View style={[styles.card, { opacity, height: size }]}>
+      <View style={[styles.image, { width: size, height: size }]} />
       <View style={styles.lines}>
         <View style={styles.line1} />
         <View style={styles.line2} />
@@ -36,18 +39,17 @@ export default function CharacterSkeleton() {
 }
 
 const styles = StyleSheet.create({
-  container: { paddingTop: 68, paddingHorizontal: 12 },
+  container: { paddingTop: layout.headerHeight + 8, paddingHorizontal: spacing.md },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#16213e',
-    borderRadius: 12,
-    marginBottom: 12,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    marginBottom: spacing.md,
     overflow: 'hidden',
-    height: 100,
   },
-  image: { width: 100, height: 100, backgroundColor: '#0f3460' },
-  lines: { flex: 1, padding: 12, justifyContent: 'center', gap: 8 },
-  line1: { height: 14, backgroundColor: '#0f3460', borderRadius: 4, width: '70%' },
-  line2: { height: 11, backgroundColor: '#0f3460', borderRadius: 4, width: '50%' },
-  line3: { height: 11, backgroundColor: '#0f3460', borderRadius: 4, width: '60%' },
+  image: { backgroundColor: colors.surfaceDeep },
+  lines: { flex: 1, padding: spacing.md, justifyContent: 'center', gap: spacing.sm },
+  line1: { height: 14, backgroundColor: colors.surfaceDeep, borderRadius: radii.sm, width: '70%' },
+  line2: { height: 11, backgroundColor: colors.surfaceDeep, borderRadius: radii.sm, width: '50%' },
+  line3: { height: 11, backgroundColor: colors.surfaceDeep, borderRadius: radii.sm, width: '60%' },
 });

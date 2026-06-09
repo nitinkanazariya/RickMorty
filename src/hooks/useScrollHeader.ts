@@ -1,7 +1,8 @@
 import { useRef, useCallback } from 'react';
 import { Animated } from 'react-native';
+import { layout } from '../theme';
 
-const HEADER_HEIGHT = 60;
+const HEADER_HEIGHT = layout.headerHeight;
 
 function useScrollHeader() {
   const scrollY = useRef(new Animated.Value(0)).current;

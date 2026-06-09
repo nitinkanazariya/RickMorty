@@ -7,17 +7,14 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Image,
+  Animated,
 } from 'react-native';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { fetchEpisodes } from '../../../services/episodeService';
 import { fetchCharactersByIds } from '../../../services/characterService';
 import useScrollHeader from '../../../hooks/useScrollHeader';
-import { Animated } from 'react-native';
+import { colors, typography, spacing, radii, layout } from '../../../theme';
 import type { Episode, Character } from '../../../types/api';
-
-interface EpisodeRowProps {
-  episode: Episode;
-}
 
 function CharacterAvatars({ urls }: { urls: string[] }) {
   const ids = urls.slice(0, 6).map(u => Number(u.split('/').pop()));
@@ -36,7 +33,7 @@ function CharacterAvatars({ urls }: { urls: string[] }) {
   );
 }
 
-function EpisodeRow({ episode }: EpisodeRowProps) {
+function EpisodeRow({ episode }: { episode: Episode }) {
   const [expanded, setExpanded] = React.useState(false);
 
   return (
@@ -84,7 +81,7 @@ export default function EpisodeListScreen() {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#00b4d8" />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -119,37 +116,48 @@ export default function EpisodeListScreen() {
         onScroll={onScroll}
         scrollEventThrottle={16}
         contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8 }}
-        ListFooterComponent={isFetchingNextPage ? <ActivityIndicator color="#00b4d8" style={styles.footer} /> : null}
+        ListFooterComponent={isFetchingNextPage ? <ActivityIndicator color={colors.accent} style={styles.footer} /> : null}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f1a' },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0f0f1a' },
+  container: { flex: 1, backgroundColor: colors.background },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
   header: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     zIndex: 10,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surfaceElevated,
     justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  sectionHeader: { backgroundColor: '#0f0f1a', paddingHorizontal: 16, paddingVertical: 10 },
-  sectionTitle: { color: '#00b4d8', fontSize: 15, fontWeight: '700' },
-  episodeRow: { backgroundColor: '#16213e', marginHorizontal: 12, marginBottom: 8, borderRadius: 10, padding: 14 },
+  headerTitle: { color: colors.textPrimary, fontSize: typography.xxl, fontWeight: '700' },
+  sectionHeader: { backgroundColor: colors.background, paddingHorizontal: spacing.lg, paddingVertical: 10 },
+  sectionTitle: { color: colors.accent, fontSize: typography.md, fontWeight: '700' },
+  episodeRow: {
+    backgroundColor: colors.surface,
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.sm,
+    borderRadius: radii.md,
+    padding: 14,
+  },
   episodeHeader: { gap: 2 },
-  episodeCode: { color: '#00b4d8', fontSize: 12, fontWeight: '700' },
-  episodeName: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  airDate: { color: '#6b7280', fontSize: 12 },
-  avatarRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 12 },
-  avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#0f3460' },
-  footer: { paddingVertical: 16 },
-  errorText: { color: '#ef4444', fontSize: 16, marginBottom: 12 },
-  retryBtn: { backgroundColor: '#00b4d8', paddingHorizontal: 24, paddingVertical: 10, borderRadius: 8 },
-  retryText: { color: '#fff', fontWeight: '600' },
+  episodeCode: { color: colors.accent, fontSize: typography.sm, fontWeight: '700' },
+  episodeName: { color: colors.textPrimary, fontSize: typography.base, fontWeight: '600' },
+  airDate: { color: colors.textDisabled, fontSize: typography.sm },
+  avatarRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.md },
+  avatar: {
+    width: layout.episodeAvatarSize,
+    height: layout.episodeAvatarSize,
+    borderRadius: layout.episodeAvatarSize / 2,
+    backgroundColor: colors.surfaceDeep,
+  },
+  footer: { paddingVertical: spacing.lg },
+  errorText: { color: colors.error, fontSize: typography.lg, marginBottom: spacing.md },
+  retryBtn: { backgroundColor: colors.accent, paddingHorizontal: spacing.xxl, paddingVertical: 10, borderRadius: radii.sm },
+  retryText: { color: colors.textPrimary, fontWeight: '600' },
 });

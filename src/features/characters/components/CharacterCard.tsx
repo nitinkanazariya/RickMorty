@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { colors, typography, spacing, radii, layout, statusColors } from '../../../theme';
 import type { Character } from '../../../types/api';
 
 interface Props {
@@ -7,37 +8,28 @@ interface Props {
   onPress: () => void;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  Alive: '#22c55e',
-  Dead: '#ef4444',
-  unknown: '#6b7280',
-};
-
 export default function CharacterCard({ character, onPress }: Props) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const size = layout.cardImageSize;
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.75}>
-      <View style={styles.imageWrapper}>
-        {!imageLoaded && <View style={styles.imagePlaceholder} />}
+      <View style={[styles.imageWrapper, { width: size, height: size }]}>
+        {!imageLoaded && <View style={[styles.imagePlaceholder, { width: size, height: size }]} />}
         <Image
           source={{ uri: character.image }}
-          style={[styles.image, !imageLoaded && styles.hidden]}
+          style={[{ width: size, height: size }, !imageLoaded && styles.hidden]}
           onLoad={() => setImageLoaded(true)}
         />
       </View>
       <View style={styles.info}>
-        <Text style={styles.name} numberOfLines={1}>
-          {character.name}
-        </Text>
+        <Text style={styles.name} numberOfLines={1}>{character.name}</Text>
         <View style={styles.statusRow}>
-          <View style={[styles.statusDot, { backgroundColor: STATUS_COLORS[character.status] ?? '#6b7280' }]} />
+          <View style={[styles.statusDot, { backgroundColor: statusColors[character.status] ?? colors.statusUnknown }]} />
           <Text style={styles.statusText}>{character.status} — {character.species}</Text>
         </View>
         <Text style={styles.label}>Last seen:</Text>
-        <Text style={styles.locationText} numberOfLines={1}>
-          {character.location.name}
-        </Text>
+        <Text style={styles.locationText} numberOfLines={1}>{character.location.name}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -46,25 +38,22 @@ export default function CharacterCard({ character, onPress }: Props) {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    backgroundColor: '#16213e',
-    borderRadius: 12,
-    marginBottom: 12,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    marginBottom: spacing.md,
     overflow: 'hidden',
   },
-  imageWrapper: { width: 100, height: 100 },
-  image: { width: 100, height: 100 },
+  imageWrapper: { position: 'relative' },
   imagePlaceholder: {
-    width: 100,
-    height: 100,
-    backgroundColor: '#0f3460',
+    backgroundColor: colors.surfaceDeep,
     position: 'absolute',
   },
   hidden: { opacity: 0, position: 'absolute' },
-  info: { flex: 1, padding: 12, justifyContent: 'center' },
-  name: { color: '#fff', fontWeight: '700', fontSize: 15, marginBottom: 4 },
-  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  statusDot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
-  statusText: { color: '#9ca3af', fontSize: 13 },
-  label: { color: '#6b7280', fontSize: 11, marginBottom: 2 },
-  locationText: { color: '#d1d5db', fontSize: 13 },
+  info: { flex: 1, padding: spacing.md, justifyContent: 'center' },
+  name: { color: colors.textPrimary, fontWeight: '700', fontSize: typography.md, marginBottom: spacing.xs },
+  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
+  statusDot: { width: 8, height: 8, borderRadius: radii.full, marginRight: 6 },
+  statusText: { color: colors.textMuted, fontSize: typography.sm },
+  label: { color: colors.textDisabled, fontSize: typography.xs, marginBottom: 2 },
+  locationText: { color: colors.textSecondary, fontSize: typography.sm },
 });

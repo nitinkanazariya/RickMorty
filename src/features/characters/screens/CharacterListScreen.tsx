@@ -20,6 +20,7 @@ import CharacterSkeleton from '../components/CharacterSkeleton';
 import FilterModal from '../components/FilterModal';
 import { useAppSelector, useAppDispatch } from '../../../hooks/useAppDispatch';
 import { setStatusFilter, setGenderFilter } from '../../../store/slices/uiSlice';
+import { colors, typography, spacing, radii } from '../../../theme';
 import type { CharacterStackParamList } from '../../../types/navigation';
 import type { Character } from '../../../types/api';
 
@@ -49,9 +50,7 @@ export default function CharacterListScreen() {
   const characters = data?.pages.flatMap(p => p.results) ?? [];
 
   const handleEndReached = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const renderItem = useCallback(
@@ -64,10 +63,8 @@ export default function CharacterListScreen() {
     [navigation],
   );
 
-  const renderFooter = () => {
-    if (!isFetchingNextPage) return null;
-    return <ActivityIndicator style={styles.footer} color="#00b4d8" />;
-  };
+  const renderFooter = () =>
+    isFetchingNextPage ? <ActivityIndicator style={styles.footer} color={colors.accent} /> : null;
 
   const renderEmpty = () => {
     if (isLoading) return null;
@@ -91,14 +88,11 @@ export default function CharacterListScreen() {
   return (
     <View style={styles.container}>
       <Animated.View
-        style={[
-          styles.header,
-          { height: HEADER_HEIGHT, transform: [{ translateY: headerTranslate }] },
-        ]}>
+        style={[styles.header, { height: HEADER_HEIGHT, transform: [{ translateY: headerTranslate }] }]}>
         <TextInput
           style={styles.searchInput}
           placeholder="Search characters..."
-          placeholderTextColor="#6b7280"
+          placeholderTextColor={colors.textDisabled}
           value={searchText}
           onChangeText={setSearchText}
         />
@@ -118,7 +112,7 @@ export default function CharacterListScreen() {
           onEndReachedThreshold={0.4}
           ListFooterComponent={renderFooter}
           ListEmptyComponent={renderEmpty}
-          contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingHorizontal: 12 }}
+          contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingHorizontal: spacing.md }}
           onScroll={onScroll}
           scrollEventThrottle={16}
         />
@@ -140,44 +134,44 @@ export default function CharacterListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f1a' },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     zIndex: 10,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surfaceElevated,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    gap: 8,
+    paddingHorizontal: spacing.md,
+    gap: spacing.sm,
   },
   searchInput: {
     flex: 1,
     height: 40,
-    backgroundColor: '#16213e',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    color: '#fff',
-    fontSize: 14,
+    backgroundColor: colors.surface,
+    borderRadius: radii.sm,
+    paddingHorizontal: spacing.md,
+    color: colors.textPrimary,
+    fontSize: typography.base,
   },
   filterBtn: {
-    backgroundColor: '#00b4d8',
+    backgroundColor: colors.accent,
     paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.sm,
   },
-  filterText: { color: '#fff', fontWeight: '600', fontSize: 13 },
-  footer: { paddingVertical: 16 },
+  filterText: { color: colors.textPrimary, fontWeight: '600', fontSize: typography.sm },
+  footer: { paddingVertical: spacing.lg },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 80 },
-  errorText: { color: '#ef4444', fontSize: 16, marginBottom: 12 },
-  emptyText: { color: '#6b7280', fontSize: 16 },
+  errorText: { color: colors.error, fontSize: typography.lg, marginBottom: spacing.md },
+  emptyText: { color: colors.textDisabled, fontSize: typography.lg },
   retryBtn: {
-    backgroundColor: '#00b4d8',
-    paddingHorizontal: 24,
+    backgroundColor: colors.accent,
+    paddingHorizontal: spacing.xxl,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: radii.sm,
   },
-  retryText: { color: '#fff', fontWeight: '600' },
+  retryText: { color: colors.textPrimary, fontWeight: '600' },
 });

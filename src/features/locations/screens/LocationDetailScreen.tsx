@@ -14,6 +14,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackScreenProps, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { fetchLocationById } from '../../../services/locationService';
 import { fetchCharactersByIds } from '../../../services/characterService';
+import { colors, typography, spacing, radii, layout } from '../../../theme';
 import type { LocationStackParamList } from '../../../types/navigation';
 import type { Character } from '../../../types/api';
 
@@ -41,7 +42,7 @@ export default function LocationDetailScreen() {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#00b4d8" />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -56,6 +57,8 @@ export default function LocationDetailScreen() {
       </View>
     );
   }
+
+  const avatarSize = layout.residentColumns === 5 ? 64 : 80;
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -74,16 +77,15 @@ export default function LocationDetailScreen() {
       <FlatList
         data={residents ?? []}
         keyExtractor={item => String(item.id)}
-        numColumns={3}
+        numColumns={layout.residentColumns}
+        key={`res-${layout.residentColumns}`}
         scrollEnabled={false}
         columnWrapperStyle={styles.row}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xxxl }}
         renderItem={({ item }) => (
           <View style={styles.residentCard}>
-            <Image source={{ uri: item.image }} style={styles.avatar} />
-            <Text style={styles.residentName} numberOfLines={2}>
-              {item.name}
-            </Text>
+            <Image source={{ uri: item.image }} style={[styles.avatar, { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }]} />
+            <Text style={styles.residentName} numberOfLines={2}>{item.name}</Text>
           </View>
         )}
       />
@@ -92,27 +94,27 @@ export default function LocationDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f1a' },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0f0f1a' },
-  backBtn: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
-  backText: { color: '#00b4d8', fontSize: 16 },
+  container: { flex: 1, backgroundColor: colors.background },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
+  backBtn: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
+  backText: { color: colors.accent, fontSize: typography.lg },
   infoCard: {
-    margin: 16,
-    backgroundColor: '#16213e',
-    borderRadius: 16,
-    padding: 20,
-    gap: 6,
+    margin: spacing.lg,
+    backgroundColor: colors.surface,
+    borderRadius: radii.xl,
+    padding: spacing.xl,
+    gap: spacing.sm,
   },
-  name: { color: '#fff', fontSize: 22, fontWeight: '800' },
-  type: { color: '#00b4d8', fontSize: 14 },
-  dimension: { color: '#9ca3af', fontSize: 14 },
-  residents: { color: '#6b7280', fontSize: 13, marginTop: 4 },
-  sectionTitle: { color: '#fff', fontSize: 17, fontWeight: '700', paddingHorizontal: 16, marginBottom: 12 },
+  name: { color: colors.textPrimary, fontSize: typography.xxxl, fontWeight: '800' },
+  type: { color: colors.accent, fontSize: typography.base },
+  dimension: { color: colors.textMuted, fontSize: typography.base },
+  residents: { color: colors.textDisabled, fontSize: typography.sm, marginTop: spacing.xs },
+  sectionTitle: { color: colors.textPrimary, fontSize: typography.xl, fontWeight: '700', paddingHorizontal: spacing.lg, marginBottom: spacing.md },
   row: { gap: 10, marginBottom: 10 },
   residentCard: { flex: 1, alignItems: 'center' },
-  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#16213e', marginBottom: 6 },
-  residentName: { color: '#d1d5db', fontSize: 11, textAlign: 'center' },
-  errorText: { color: '#ef4444', fontSize: 16, marginBottom: 12 },
-  retryBtn: { backgroundColor: '#00b4d8', paddingHorizontal: 24, paddingVertical: 10, borderRadius: 8 },
-  retryText: { color: '#fff', fontWeight: '600' },
+  avatar: { backgroundColor: colors.surface, marginBottom: spacing.sm },
+  residentName: { color: colors.textSecondary, fontSize: typography.xs, textAlign: 'center' },
+  errorText: { color: colors.error, fontSize: typography.lg, marginBottom: spacing.md },
+  retryBtn: { backgroundColor: colors.accent, paddingHorizontal: spacing.xxl, paddingVertical: 10, borderRadius: radii.sm },
+  retryText: { color: colors.textPrimary, fontWeight: '600' },
 });

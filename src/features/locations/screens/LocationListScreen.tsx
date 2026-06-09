@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { fetchLocations } from '../../../services/locationService';
 import useScrollHeader from '../../../hooks/useScrollHeader';
+import { colors, typography, spacing, radii, layout } from '../../../theme';
 import type { LocationStackParamList } from '../../../types/navigation';
 import type { Location } from '../../../types/api';
 
@@ -44,9 +45,7 @@ export default function LocationListScreen() {
         activeOpacity={0.8}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.type}>{item.type}</Text>
-        <Text style={styles.dimension} numberOfLines={1}>
-          {item.dimension}
-        </Text>
+        <Text style={styles.dimension} numberOfLines={1}>{item.dimension}</Text>
         <Text style={styles.residents}>{item.residents.length} residents</Text>
       </TouchableOpacity>
     ),
@@ -56,7 +55,7 @@ export default function LocationListScreen() {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#00b4d8" />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -85,11 +84,12 @@ export default function LocationListScreen() {
         onEndReachedThreshold={0.4}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingHorizontal: 12 }}
+        numColumns={layout.locationColumns}
+        key={`loc-${layout.locationColumns}`}
+        columnWrapperStyle={layout.locationColumns > 1 ? styles.row : undefined}
+        contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingHorizontal: spacing.md }}
         ListFooterComponent={
-          isFetchingNextPage ? <ActivityIndicator color="#00b4d8" style={styles.footer} /> : null
+          isFetchingNextPage ? <ActivityIndicator color={colors.accent} style={styles.footer} /> : null
         }
       />
     </View>
@@ -97,33 +97,33 @@ export default function LocationListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f1a' },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0f0f1a' },
+  container: { flex: 1, backgroundColor: colors.background },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
   header: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     zIndex: 10,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surfaceElevated,
     justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  row: { gap: 12, marginBottom: 12 },
+  headerTitle: { color: colors.textPrimary, fontSize: typography.xxl, fontWeight: '700' },
+  row: { gap: spacing.md, marginBottom: spacing.md },
   card: {
     flex: 1,
-    backgroundColor: '#16213e',
-    borderRadius: 12,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
     padding: 14,
-    gap: 4,
+    gap: spacing.xs,
   },
-  name: { color: '#fff', fontWeight: '700', fontSize: 14 },
-  type: { color: '#00b4d8', fontSize: 12 },
-  dimension: { color: '#9ca3af', fontSize: 12 },
-  residents: { color: '#6b7280', fontSize: 11, marginTop: 4 },
-  footer: { paddingVertical: 16 },
-  errorText: { color: '#ef4444', fontSize: 16, marginBottom: 12 },
-  retryBtn: { backgroundColor: '#00b4d8', paddingHorizontal: 24, paddingVertical: 10, borderRadius: 8 },
-  retryText: { color: '#fff', fontWeight: '600' },
+  name: { color: colors.textPrimary, fontWeight: '700', fontSize: typography.base },
+  type: { color: colors.accent, fontSize: typography.sm },
+  dimension: { color: colors.textMuted, fontSize: typography.sm },
+  residents: { color: colors.textDisabled, fontSize: typography.xs, marginTop: spacing.xs },
+  footer: { paddingVertical: spacing.lg },
+  errorText: { color: colors.error, fontSize: typography.lg, marginBottom: spacing.md },
+  retryBtn: { backgroundColor: colors.accent, paddingHorizontal: spacing.xxl, paddingVertical: 10, borderRadius: radii.sm },
+  retryText: { color: colors.textPrimary, fontWeight: '600' },
 });
