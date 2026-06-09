@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useRef, useCallback } from 'react';
-import { Animated } from 'react-native';
+import { Animated, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { layout } from '../theme';
+
+const BOTTOM_EXTRA = Platform.OS === 'android' ? 24 : 10;
 
 interface TabBarContextValue {
   tabBarTranslate: Animated.Value;
@@ -14,7 +16,7 @@ const TabBarContext = createContext<TabBarContextValue>({} as TabBarContextValue
 
 export function TabBarProvider({ children }: { children: React.ReactNode }) {
   const insets = useSafeAreaInsets();
-  const totalTabBarHeight = layout.tabBarHeight + insets.bottom;
+  const totalTabBarHeight = layout.tabBarHeight + insets.bottom + BOTTOM_EXTRA;
   const tabBarTranslate = useRef(new Animated.Value(0)).current;
   const lastScrollY = useRef(0);
   const isHidden = useRef(false);
