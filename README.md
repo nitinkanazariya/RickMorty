@@ -1,18 +1,18 @@
 # Rick and Morty App
 
-A React Native application built with the [Rick and Morty API](https://rickandmortyapi.com/).
+A React Native app built with the [Rick and Morty API](https://rickandmortyapi.com/).
 
 ## Features
 
-- Browse all characters with infinite scroll
-- Search characters with 300ms debounce
-- Filter by status and gender
-- Character detail with episode list
-- Save/remove favourites (persisted with SQLite)
-- Browse all episodes grouped by season
-- Browse all locations with resident details
-- Offline favourites screen
-- Animated header hide/show on scroll
+- Browse characters with infinite scroll, search (300ms debounce), and status/gender filters
+- Character detail screen with full info and episode list
+- Episodes grouped by season
+- Locations list with resident character grid
+- Save/remove favourites persisted with AsyncStorage (accessible offline)
+- Animated tab bar that hides/shows on scroll
+- Dark / light theme toggle
+- Toast notification system
+- Skeleton loading states throughout
 
 ## Tech Stack
 
@@ -20,28 +20,30 @@ A React Native application built with the [Rick and Morty API](https://rickandmo
 |---|---|
 | React Native 0.85 | Framework |
 | TypeScript (strict) | Language |
-| @tanstack/react-query | Data fetching & caching |
+| @tanstack/react-query | Server state, caching, infinite pagination |
 | Axios | HTTP client |
-| Redux Toolkit | Global UI state |
-| @op-engineering/op-sqlite | Local SQLite persistence |
-| @react-navigation/native | Navigation |
-| react-native-reanimated | Animations |
+| Redux Toolkit | Favourites & UI filter state |
+| @react-native-async-storage/async-storage | Favourites persistence |
+| @react-navigation/native | Navigation (stack + bottom tabs) |
+| react-native-heroicons | Icons |
 
 ## Project Structure
 
 ```
 src/
   features/
-    characters/     # Character list, detail, components
-    episodes/       # Episodes list
-    locations/      # Locations list and detail
+    characters/     # Character list, detail, filter modal, skeletons
+    episodes/       # Episodes list grouped by season
+    locations/      # Locations list and detail with residents
     favourites/     # Offline favourites screen
-  services/         # Axios API calls
-  store/            # Redux slices
+  services/         # Axios API layer (character, episode, location)
+  store/            # Redux store, favouritesSlice, uiSlice
   hooks/            # useDebounce, useScrollHeader, useAppDispatch
-  types/            # TypeScript interfaces
-  utils/            # SQLite database helpers
-  app/navigation/   # React Navigation setup
+  context/          # ThemeContext, TabBarContext, ToastContext
+  types/            # TypeScript interfaces (API + navigation)
+  utils/            # AsyncStorage helpers
+  constants/        # App strings
+  app/navigation/   # RootNavigator (bottom tabs + nested stacks)
 ```
 
 ## Setup
@@ -72,8 +74,3 @@ yarn start
 ```bash
 yarn test
 ```
-
-## Known Limitations
-
-- `react-native-fast-image` does not support React 19 — progressive image loading is implemented manually using the built-in `Image` component with a placeholder state
-- Shared element transitions are not implemented; card press scale animation via Reanimated is included instead
