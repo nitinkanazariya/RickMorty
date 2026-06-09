@@ -47,24 +47,30 @@ src/
 ## Setup
 
 ```bash
-npm install
+yarn install
 ```
 
 **iOS:**
 ```bash
 cd ios && pod install && cd ..
-npx react-native run-ios
+yarn ios
 ```
 
 **Android:**
 ```bash
-npx react-native run-android
+yarn android
+```
+
+## Start Metro
+
+```bash
+yarn start
 ```
 
 ## Running Tests
 
 ```bash
-npm test
+yarn test
 ```
 
 ## Known Limitations
