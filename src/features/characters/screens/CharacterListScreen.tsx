@@ -35,7 +35,7 @@ export default function CharacterListScreen() {
   const [showFilter, setShowFilter] = useState(false);
   const debouncedSearch = useDebounce(searchText, 300);
 
-  const { headerTranslate, onScroll, HEADER_HEIGHT } = useScrollHeader();
+  const { headerTranslate, onScroll, HEADER_HEIGHT, topInset } = useScrollHeader();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useInfiniteQuery({
@@ -88,7 +88,7 @@ export default function CharacterListScreen() {
   return (
     <View style={styles.container}>
       <Animated.View
-        style={[styles.header, { height: HEADER_HEIGHT, transform: [{ translateY: headerTranslate }] }]}>
+        style={[styles.header, { height: HEADER_HEIGHT, paddingTop: topInset, transform: [{ translateY: headerTranslate }] }]}>
         <TextInput
           style={styles.searchInput}
           placeholder="Search characters..."

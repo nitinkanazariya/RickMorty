@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackScreenProps, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { fetchLocationById } from '../../../services/locationService';
 import { fetchCharactersByIds } from '../../../services/characterService';
 import { colors, typography, spacing, radii, layout } from '../../../theme';
@@ -23,6 +24,7 @@ type RouteProp = NativeStackScreenProps<LocationStackParamList, 'LocationDetail'
 type NavProp = NativeStackNavigationProp<LocationStackParamList>;
 
 export default function LocationDetailScreen() {
+  const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp>();
   const navigation = useNavigation<NavProp>();
   const { id } = route.params;
@@ -63,7 +65,7 @@ export default function LocationDetailScreen() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={[styles.backBtn, { paddingTop: insets.top + spacing.sm }]} onPress={() => navigation.goBack()}>
         <ChevronLeftIcon size={20} color={colors.accent} />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>

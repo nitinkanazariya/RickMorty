@@ -8,12 +8,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { StarIcon, XMarkIcon } from 'react-native-heroicons/outline';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useAppDispatch';
 import { removeFavouriteById } from '../../../store/slices/favouritesSlice';
 import { colors, typography, spacing, radii, layout, statusColors } from '../../../theme';
 import type { Character } from '../../../types/api';
 
 export default function FavouritesScreen() {
+  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const favourites = useAppSelector(s => s.favourites.items);
 
@@ -53,7 +55,7 @@ export default function FavouritesScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { height: layout.headerHeight }]}>
+      <View style={[styles.header, { height: layout.headerHeight + insets.top, paddingTop: insets.top }]}>
         <Text style={styles.headerTitle}>Favourites</Text>
       </View>
       <FlatList

@@ -49,7 +49,7 @@ function EpisodeRow({ episode }: { episode: Episode }) {
 }
 
 export default function EpisodeListScreen() {
-  const { headerTranslate, onScroll, HEADER_HEIGHT } = useScrollHeader();
+  const { headerTranslate, onScroll, HEADER_HEIGHT, topInset } = useScrollHeader();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useInfiniteQuery({
@@ -99,7 +99,7 @@ export default function EpisodeListScreen() {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.header, { height: HEADER_HEIGHT, transform: [{ translateY: headerTranslate }] }]}>
+      <Animated.View style={[styles.header, { height: HEADER_HEIGHT, paddingTop: topInset, transform: [{ translateY: headerTranslate }] }]}>
         <Text style={styles.headerTitle}>Episodes</Text>
       </Animated.View>
       <SectionList

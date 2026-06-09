@@ -14,6 +14,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ChevronLeftIcon, StarIcon } from 'react-native-heroicons/outline';
 import { StarIcon as StarIconSolid } from 'react-native-heroicons/solid';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { fetchCharacterById } from '../../../services/characterService';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useAppDispatch';
 import { addFavourite, removeFavouriteById } from '../../../store/slices/favouritesSlice';
@@ -28,6 +29,7 @@ export default function CharacterDetailScreen() {
   const route = useRoute<RouteProp>();
   const navigation = useNavigation<NavProp>();
   const dispatch = useAppDispatch();
+  const insets = useSafeAreaInsets();
   const { id } = route.params;
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -68,7 +70,7 @@ export default function CharacterDetailScreen() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={[styles.backBtn, { paddingTop: insets.top + spacing.sm }]} onPress={() => navigation.goBack()}>
         <ChevronLeftIcon size={20} color={colors.accent} />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>

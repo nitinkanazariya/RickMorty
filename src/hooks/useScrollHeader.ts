@@ -1,11 +1,12 @@
 import { useRef, useCallback } from 'react';
 import { Animated } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { layout } from '../theme';
 
-const HEADER_HEIGHT = layout.headerHeight;
-
 function useScrollHeader() {
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const insets = useSafeAreaInsets();
+  const HEADER_HEIGHT = layout.headerHeight + insets.top;
+
   const lastScrollY = useRef(0);
   const headerTranslate = useRef(new Animated.Value(0)).current;
 
@@ -30,10 +31,10 @@ function useScrollHeader() {
 
       lastScrollY.current = currentY;
     },
-    [headerTranslate],
+    [headerTranslate, HEADER_HEIGHT],
   );
 
-  return { scrollY, headerTranslate, onScroll, HEADER_HEIGHT };
+  return { headerTranslate, onScroll, HEADER_HEIGHT, topInset: insets.top };
 }
 
 export default useScrollHeader;
