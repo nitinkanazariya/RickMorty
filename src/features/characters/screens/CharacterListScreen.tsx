@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, FlatList, TextInput,
   Animated, TouchableOpacity, ActivityIndicator,
+  type NativeSyntheticEvent, type NativeScrollEvent,
 } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
@@ -37,8 +38,8 @@ export default function CharacterListScreen() {
   const { headerTranslate, onScroll, onScrollEnd, HEADER_HEIGHT, topInset } = useScrollHeader();
   const { onTabBarScroll, onTabBarScrollEnd, totalTabBarHeight } = useTabBar();
 
-  const handleScroll = useCallback((e: any) => { onScroll(e); onTabBarScroll(e); }, [onScroll, onTabBarScroll]);
-  const handleScrollEnd = useCallback((e: any) => { onScrollEnd(e); onTabBarScrollEnd(e); }, [onScrollEnd, onTabBarScrollEnd]);
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => { onScroll(e); onTabBarScroll(e); }, [onScroll, onTabBarScroll]);
+  const handleScrollEnd = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => { onScrollEnd(e); onTabBarScrollEnd(e); }, [onScrollEnd, onTabBarScrollEnd]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useInfiniteQuery({

@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState, useRef } from 'react';
 import {
   View, Text, FlatList,
   TouchableOpacity, Image, Animated, ScrollView,
+  type NativeSyntheticEvent, type NativeScrollEvent,
 } from 'react-native';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { MoonIcon, SunIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
@@ -69,8 +70,8 @@ export default function EpisodeListScreen() {
   const { headerTranslate, onScroll, onScrollEnd, HEADER_HEIGHT, topInset } = useScrollHeader();
   const { onTabBarScroll, onTabBarScrollEnd, totalTabBarHeight } = useTabBar();
 
-  const handleScroll = useCallback((e: any) => { onScroll(e); onTabBarScroll(e); }, [onScroll, onTabBarScroll]);
-  const handleScrollEnd = useCallback((e: any) => { onScrollEnd(e); onTabBarScrollEnd(e); }, [onScrollEnd, onTabBarScrollEnd]);
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => { onScroll(e); onTabBarScroll(e); }, [onScroll, onTabBarScroll]);
+  const handleScrollEnd = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => { onScrollEnd(e); onTabBarScrollEnd(e); }, [onScrollEnd, onTabBarScrollEnd]);
   const [selectedSeason, setSelectedSeason] = useState('S01');
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =

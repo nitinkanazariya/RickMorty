@@ -1,4 +1,7 @@
 import React, { useRef } from 'react';
+import type { SvgProps } from 'react-native-svg';
+
+type IconComponent = React.FC<SvgProps & { size?: number; color?: string }>;
 import { View, TouchableOpacity, Animated, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -49,7 +52,7 @@ function LocationStackNavigator() {
 
 const ICON_SIZE = 24;
 
-const TAB_ICONS: Record<string, { outline: React.FC<any>; solid: React.FC<any> }> = {
+const TAB_ICONS: Record<string, { outline: IconComponent; solid: IconComponent }> = {
   Characters: { outline: UserGroupIcon, solid: UserGroupIconSolid },
   Episodes:   { outline: FilmIcon,      solid: FilmIconSolid      },
   Locations:  { outline: GlobeAltIcon,  solid: GlobeAltIconSolid  },
@@ -80,7 +83,7 @@ function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
     ]).start();
 
     const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-    if (!focused && !event.defaultPrevented) navigation.navigate(route.name as any);
+    if (!focused && !event.defaultPrevented) navigation.navigate(route.name as keyof RootTabParamList);
   };
 
   return (

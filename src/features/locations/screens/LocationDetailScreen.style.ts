@@ -22,7 +22,7 @@ export function makeStyles(c: Colors) {
     avatar: { backgroundColor: c.surface, marginBottom: spacing.sm },
     residentName: { color: c.textSecondary, fontSize: typography.xs, textAlign: 'center' },
     noResidentsWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.xxxl * 2 },
-    noResidents: { color: c.textMuted, fontSize: typography.xxl, fontWeight: '600', textAlign: 'center' },
+    noResidents: { color: c.textMuted, fontSize: typography.base, fontWeight: '400', textAlign: 'center' },
     errorText: { color: c.error, fontSize: typography.lg, marginBottom: spacing.md },
     retryBtn: { backgroundColor: c.accent, paddingHorizontal: spacing.xxl, paddingVertical: 10, borderRadius: radii.sm },
     retryText: { color: c.textPrimary, fontWeight: '600' },
