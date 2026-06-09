@@ -131,7 +131,8 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     backgroundColor: colors.surfaceElevated,
-    borderTopColor: colors.surface,
+    borderTopColor: colors.accent + '55',
+    borderTopWidth: 1.5,
     height: 60,
     paddingBottom: 8,
   },

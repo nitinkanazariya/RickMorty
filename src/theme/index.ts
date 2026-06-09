@@ -5,25 +5,29 @@ const { width } = Dimensions.get('window');
 export const isTablet = width >= 768;
 
 export const colors = {
-  background: '#0f0f1a',
-  surface: '#16213e',
-  surfaceElevated: '#1a1a2e',
-  surfaceDeep: '#0f3460',
-  accent: '#00b4d8',
+  background: '#060c1a',
+  surface: '#0d1e3d',
+  surfaceElevated: '#0f2455',
+  surfaceDeep: '#07102a',
+  border: '#1e3a6e',
 
-  textPrimary: '#ffffff',
-  textSecondary: '#d1d5db',
-  textMuted: '#9ca3af',
-  textDisabled: '#6b7280',
-  textDimmed: '#4b5563',
-  textFaint: '#374151',
+  accent: '#39ff14',
+  accentDim: '#1a8a06',
+  accentBlue: '#00d4ff',
 
-  statusAlive: '#22c55e',
-  statusDead: '#ef4444',
-  statusUnknown: '#6b7280',
+  textPrimary: '#f0f8ff',
+  textSecondary: '#a8c8e8',
+  textMuted: '#5a7a9a',
+  textDisabled: '#3a5a7a',
+  textDimmed: '#2a4060',
+  textFaint: '#1a2e48',
 
-  error: '#ef4444',
-  overlay: 'rgba(0,0,0,0.6)',
+  statusAlive: '#39ff14',
+  statusDead: '#ff4444',
+  statusUnknown: '#8899aa',
+
+  error: '#ff4444',
+  overlay: 'rgba(6,12,26,0.88)',
 };
 
 export const typography = {
@@ -48,11 +52,28 @@ export const spacing = {
 };
 
 export const radii = {
-  sm: 8,
-  md: 10,
-  lg: 12,
-  xl: 16,
+  sm: 10,
+  md: 14,
+  lg: 16,
+  xl: 20,
   full: 9999,
+};
+
+export const shadows = {
+  card: {
+    shadowColor: '#39ff14',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  accent: {
+    shadowColor: '#39ff14',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.45,
+    shadowRadius: 12,
+    elevation: 10,
+  },
 };
 
 export const layout = {

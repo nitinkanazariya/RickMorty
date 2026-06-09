@@ -21,6 +21,7 @@ export default function FilterModal({ visible, currentStatus, currentGender, onA
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.sheet}>
+          <View style={styles.handle} />
           <Text style={styles.title}>Filter Characters</Text>
 
           <Text style={styles.label}>Status</Text>
@@ -72,21 +73,34 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: radii.xl + 4,
     borderTopRightRadius: radii.xl + 4,
     padding: spacing.xxl,
+    borderTopWidth: 2,
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderColor: colors.border,
   },
-  title: { color: colors.textPrimary, fontSize: typography.xl, fontWeight: '700', marginBottom: spacing.xl },
-  label: { color: colors.textMuted, fontSize: typography.sm, marginBottom: spacing.sm },
+  handle: {
+    width: 40,
+    height: 4,
+    backgroundColor: colors.accent,
+    borderRadius: radii.full,
+    alignSelf: 'center',
+    marginBottom: spacing.xl,
+    opacity: 0.7,
+  },
+  title: { color: colors.textPrimary, fontSize: typography.xl, fontWeight: '800', marginBottom: spacing.xl },
+  label: { color: colors.textMuted, fontSize: typography.sm, fontWeight: '600', marginBottom: spacing.sm, letterSpacing: 0.8, textTransform: 'uppercase' },
   options: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.xl },
   chip: {
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: radii.full,
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.surfaceDeep,
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
-  chipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
-  chipText: { color: colors.textMuted, fontSize: typography.sm },
-  chipTextActive: { color: colors.textPrimary, fontWeight: '600' },
+  chipActive: { backgroundColor: colors.accentDim, borderColor: colors.accent },
+  chipText: { color: colors.textMuted, fontSize: typography.sm, fontWeight: '600' },
+  chipTextActive: { color: colors.accent, fontWeight: '700' },
   actions: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.xs },
   cancelBtn: {
     flex: 1,
@@ -94,14 +108,18 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     backgroundColor: colors.surface,
     alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
   cancelText: { color: colors.textMuted, fontWeight: '600' },
   applyBtn: {
     flex: 1,
     paddingVertical: spacing.md,
     borderRadius: radii.md,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.accentDim,
     alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: colors.accent,
   },
-  applyText: { color: colors.textPrimary, fontWeight: '700' },
+  applyText: { color: colors.accent, fontWeight: '800' },
 });

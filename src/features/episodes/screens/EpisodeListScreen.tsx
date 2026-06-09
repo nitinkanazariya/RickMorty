@@ -27,7 +27,9 @@ function CharacterAvatars({ urls }: { urls: string[] }) {
   return (
     <View style={styles.avatarRow}>
       {(characters ?? []).map(c => (
-        <Image key={c.id} source={{ uri: c.image }} style={styles.avatar} />
+        <View key={c.id} style={styles.avatarWrapper}>
+          <Image source={{ uri: c.image }} style={styles.avatar} />
+        </View>
       ))}
     </View>
   );
@@ -38,10 +40,15 @@ function EpisodeRow({ episode }: { episode: Episode }) {
 
   return (
     <TouchableOpacity style={styles.episodeRow} onPress={() => setExpanded(p => !p)} activeOpacity={0.8}>
-      <View style={styles.episodeHeader}>
-        <Text style={styles.episodeCode}>{episode.episode}</Text>
-        <Text style={styles.episodeName}>{episode.name}</Text>
-        <Text style={styles.airDate}>{episode.air_date}</Text>
+      <View style={styles.episodeInner}>
+        <View style={styles.codeTag}>
+          <Text style={styles.episodeCode}>{episode.episode}</Text>
+        </View>
+        <View style={styles.episodeTextBlock}>
+          <Text style={styles.episodeName}>{episode.name}</Text>
+          <Text style={styles.airDate}>{episode.air_date}</Text>
+        </View>
+        <Text style={styles.chevron}>{expanded ? '▲' : '▼'}</Text>
       </View>
       {expanded && <CharacterAvatars urls={episode.characters} />}
     </TouchableOpacity>
@@ -108,7 +115,9 @@ export default function EpisodeListScreen() {
         renderItem={({ item }) => <EpisodeRow episode={item} />}
         renderSectionHeader={({ section }) => (
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{section.title}</Text>
+            <View style={styles.sectionPill}>
+              <Text style={styles.sectionTitle}>{section.title}</Text>
+            </View>
           </View>
         )}
         onEndReached={handleEndReached}
@@ -129,37 +138,68 @@ const styles = StyleSheet.create({
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
   header: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
+    top: 0, left: 0, right: 0, zIndex: 10,
     backgroundColor: colors.surfaceElevated,
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,
+    borderBottomWidth: 1.5,
+    borderBottomColor: colors.accent + '55',
   },
-  headerTitle: { color: colors.textPrimary, fontSize: typography.xxl, fontWeight: '700' },
-  sectionHeader: { backgroundColor: colors.background, paddingHorizontal: spacing.lg, paddingVertical: 10 },
-  sectionTitle: { color: colors.accent, fontSize: typography.md, fontWeight: '700' },
+  headerTitle: { color: colors.textPrimary, fontSize: typography.xxl, fontWeight: '800' },
+  sectionHeader: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, backgroundColor: colors.background },
+  sectionPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accentDim,
+    borderRadius: radii.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+    borderWidth: 1.5,
+    borderColor: colors.accent,
+  },
+  sectionTitle: { color: colors.accent, fontSize: typography.sm, fontWeight: '800', letterSpacing: 0.5 },
   episodeRow: {
     backgroundColor: colors.surface,
     marginHorizontal: spacing.md,
     marginBottom: spacing.sm,
     borderRadius: radii.md,
-    padding: 14,
+    padding: spacing.md,
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
-  episodeHeader: { gap: 2 },
-  episodeCode: { color: colors.accent, fontSize: typography.sm, fontWeight: '700' },
-  episodeName: { color: colors.textPrimary, fontSize: typography.base, fontWeight: '600' },
-  airDate: { color: colors.textDisabled, fontSize: typography.sm },
+  episodeInner: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  codeTag: {
+    backgroundColor: colors.accentDim,
+    borderRadius: radii.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+    borderWidth: 1,
+    borderColor: colors.accent,
+  },
+  episodeCode: { color: colors.accent, fontSize: typography.xs, fontWeight: '800' },
+  episodeTextBlock: { flex: 1 },
+  episodeName: { color: colors.textPrimary, fontSize: typography.base, fontWeight: '700' },
+  airDate: { color: colors.textDisabled, fontSize: typography.xs, marginTop: 2 },
+  chevron: { color: colors.textMuted, fontSize: typography.sm },
   avatarRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.md },
+  avatarWrapper: {
+    borderRadius: radii.full,
+    borderWidth: 2,
+    borderColor: colors.border,
+    overflow: 'hidden',
+  },
   avatar: {
     width: layout.episodeAvatarSize,
     height: layout.episodeAvatarSize,
-    borderRadius: layout.episodeAvatarSize / 2,
-    backgroundColor: colors.surfaceDeep,
   },
   footer: { paddingVertical: spacing.lg },
   errorText: { color: colors.error, fontSize: typography.lg, marginBottom: spacing.md },
-  retryBtn: { backgroundColor: colors.accent, paddingHorizontal: spacing.xxl, paddingVertical: 10, borderRadius: radii.sm },
-  retryText: { color: colors.textPrimary, fontWeight: '600' },
+  retryBtn: {
+    backgroundColor: colors.accentDim,
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: 10,
+    borderRadius: radii.full,
+    borderWidth: 1.5,
+    borderColor: colors.accent,
+  },
+  retryText: { color: colors.accent, fontWeight: '700' },
 });

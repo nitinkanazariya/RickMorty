@@ -33,13 +33,17 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     padding: spacing.md,
     width: layout.episodeChipWidth,
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
   skeleton: {
     width: layout.episodeChipWidth,
     height: 56,
     backgroundColor: colors.surface,
     borderRadius: radii.md,
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
-  code: { color: colors.accent, fontSize: typography.sm, fontWeight: '700', marginBottom: spacing.xs },
+  code: { color: colors.accent, fontSize: typography.sm, fontWeight: '800', marginBottom: spacing.xs },
   name: { color: colors.textSecondary, fontSize: typography.sm },
 });

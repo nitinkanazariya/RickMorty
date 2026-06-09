@@ -12,6 +12,7 @@ import {
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AdjustmentsHorizontalIcon } from 'react-native-heroicons/outline';
 import { fetchCharacters } from '../../../services/characterService';
 import useDebounce from '../../../hooks/useDebounce';
 import useScrollHeader from '../../../hooks/useScrollHeader';
@@ -97,7 +98,7 @@ export default function CharacterListScreen() {
           onChangeText={setSearchText}
         />
         <TouchableOpacity style={styles.filterBtn} onPress={() => setShowFilter(true)}>
-          <Text style={styles.filterText}>Filter</Text>
+          <AdjustmentsHorizontalIcon size={20} color={colors.accent} />
         </TouchableOpacity>
       </Animated.View>
 
@@ -148,32 +149,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.md,
     gap: spacing.sm,
+    borderBottomWidth: 1.5,
+    borderBottomColor: colors.accent + '55',
   },
   searchInput: {
     flex: 1,
     height: 40,
     backgroundColor: colors.surface,
-    borderRadius: radii.sm,
-    paddingHorizontal: spacing.md,
+    borderRadius: radii.full,
+    paddingHorizontal: spacing.lg,
     color: colors.textPrimary,
     fontSize: typography.base,
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
   filterBtn: {
-    backgroundColor: colors.accent,
-    paddingHorizontal: 14,
-    paddingVertical: spacing.sm,
-    borderRadius: radii.sm,
+    width: 40,
+    height: 40,
+    backgroundColor: colors.surface,
+    borderRadius: radii.full,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
-  filterText: { color: colors.textPrimary, fontWeight: '600', fontSize: typography.sm },
   footer: { paddingVertical: spacing.lg },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 80 },
   errorText: { color: colors.error, fontSize: typography.lg, marginBottom: spacing.md },
   emptyText: { color: colors.textDisabled, fontSize: typography.lg },
   retryBtn: {
-    backgroundColor: colors.accent,
+    backgroundColor: colors.accentDim,
     paddingHorizontal: spacing.xxl,
     paddingVertical: 10,
-    borderRadius: radii.sm,
+    borderRadius: radii.full,
+    borderWidth: 1.5,
+    borderColor: colors.accent,
   },
-  retryText: { color: colors.textPrimary, fontWeight: '600' },
+  retryText: { color: colors.accent, fontWeight: '700' },
 });
