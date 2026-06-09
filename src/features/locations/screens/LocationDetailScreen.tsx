@@ -1,32 +1,55 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-  ScrollView,
+  View, Text, Image, FlatList, StyleSheet, TouchableOpacity, ScrollView,
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackScreenProps, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../../../theme/ThemeContext';
+import type { Colors } from '../../../theme/ThemeContext';
 import { fetchLocationById } from '../../../services/locationService';
 import { fetchCharactersByIds } from '../../../services/characterService';
-import { colors, typography, spacing, radii, layout } from '../../../theme';
+import LocationDetailSkeleton from '../components/LocationDetailSkeleton';
+import { typography, spacing, radii, layout } from '../../../theme';
 import type { LocationStackParamList } from '../../../types/navigation';
 import type { Character } from '../../../types/api';
 
 type RouteProp = NativeStackScreenProps<LocationStackParamList, 'LocationDetail'>['route'];
 type NavProp = NativeStackNavigationProp<LocationStackParamList>;
 
+function makeStyles(c: Colors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: c.background },
+    centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: c.background },
+    backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
+    backText: { color: c.accent, fontSize: typography.lg },
+    infoCard: {
+      margin: spacing.lg, backgroundColor: c.surface,
+      borderRadius: radii.xl, padding: spacing.xl, gap: spacing.sm,
+    },
+    name: { color: c.textPrimary, fontSize: typography.xxxl, fontWeight: '800' },
+    type: { color: c.accent, fontSize: typography.base },
+    dimension: { color: c.textMuted, fontSize: typography.base },
+    residents: { color: c.textDisabled, fontSize: typography.sm, marginTop: spacing.xs },
+    sectionTitle: { color: c.textPrimary, fontSize: typography.xl, fontWeight: '700', paddingHorizontal: spacing.lg, marginBottom: spacing.md },
+    row: { gap: 10, marginBottom: 10 },
+    residentCard: { flex: 1, alignItems: 'center' },
+    avatar: { backgroundColor: c.surface, marginBottom: spacing.sm },
+    residentName: { color: c.textSecondary, fontSize: typography.xs, textAlign: 'center' },
+    errorText: { color: c.error, fontSize: typography.lg, marginBottom: spacing.md },
+    retryBtn: { backgroundColor: c.accent, paddingHorizontal: spacing.xxl, paddingVertical: 10, borderRadius: radii.sm },
+    retryText: { color: c.textPrimary, fontWeight: '600' },
+  });
+}
+
 export default function LocationDetailScreen() {
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp>();
   const navigation = useNavigation<NavProp>();
+  const { colors } = useTheme();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const { id } = route.params;
 
   const { data: location, isLoading, isError, refetch } = useQuery({
@@ -35,20 +58,13 @@ export default function LocationDetailScreen() {
   });
 
   const residentIds = (location?.residents ?? []).map(u => Number(u.split('/').pop()));
-
   const { data: residents } = useQuery<Character[]>({
     queryKey: ['residents', residentIds],
     queryFn: () => fetchCharactersByIds(residentIds),
     enabled: residentIds.length > 0,
   });
 
-  if (isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={colors.accent} />
-      </View>
-    );
-  }
+  if (isLoading) return <LocationDetailSkeleton topInset={insets.top} />;
 
   if (isError || !location) {
     return (
@@ -61,7 +77,7 @@ export default function LocationDetailScreen() {
     );
   }
 
-  const avatarSize = layout.residentColumns === 5 ? 64 : 80;
+  const avatarSize = layout.residentColumns >= 5 ? 64 : 80;
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -69,14 +85,12 @@ export default function LocationDetailScreen() {
         <ChevronLeftIcon size={20} color={colors.accent} />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
-
       <View style={styles.infoCard}>
         <Text style={styles.name}>{location.name}</Text>
         <Text style={styles.type}>{location.type}</Text>
         <Text style={styles.dimension}>{location.dimension}</Text>
         <Text style={styles.residents}>{location.residents.length} residents</Text>
       </View>
-
       <Text style={styles.sectionTitle}>Residents</Text>
       <FlatList
         data={residents ?? []}
@@ -96,29 +110,3 @@ export default function LocationDetailScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
-  backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
-  backText: { color: colors.accent, fontSize: typography.lg },
-  infoCard: {
-    margin: spacing.lg,
-    backgroundColor: colors.surface,
-    borderRadius: radii.xl,
-    padding: spacing.xl,
-    gap: spacing.sm,
-  },
-  name: { color: colors.textPrimary, fontSize: typography.xxxl, fontWeight: '800' },
-  type: { color: colors.accent, fontSize: typography.base },
-  dimension: { color: colors.textMuted, fontSize: typography.base },
-  residents: { color: colors.textDisabled, fontSize: typography.sm, marginTop: spacing.xs },
-  sectionTitle: { color: colors.textPrimary, fontSize: typography.xl, fontWeight: '700', paddingHorizontal: spacing.lg, marginBottom: spacing.md },
-  row: { gap: 10, marginBottom: 10 },
-  residentCard: { flex: 1, alignItems: 'center' },
-  avatar: { backgroundColor: colors.surface, marginBottom: spacing.sm },
-  residentName: { color: colors.textSecondary, fontSize: typography.xs, textAlign: 'center' },
-  errorText: { color: colors.error, fontSize: typography.lg, marginBottom: spacing.md },
-  retryBtn: { backgroundColor: colors.accent, paddingHorizontal: spacing.xxl, paddingVertical: 10, borderRadius: radii.sm },
-  retryText: { color: colors.textPrimary, fontWeight: '600' },
-});

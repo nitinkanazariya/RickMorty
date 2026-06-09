@@ -7,7 +7,7 @@ export type RootTabParamList = {
 
 export type CharacterStackParamList = {
   CharacterList: undefined;
-  CharacterDetail: { id: number };
+  CharacterDetail: { id: number; image: string };
 };
 
 export type EpisodeStackParamList = {

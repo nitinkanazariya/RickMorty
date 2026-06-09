@@ -4,28 +4,46 @@ const { width } = Dimensions.get('window');
 
 export const isTablet = width >= 768;
 
-export const colors = {
+export const lightColors = {
+  background: '#f0fdfa',
+  surface: '#ffffff',
+  surfaceElevated: '#ffffff',
+  surfaceDeep: '#ccfbf1',
+  border: '#5eead4',
+  accent: '#059669',
+  accentDim: '#d1fae5',
+  accentBlue: '#0ea5e9',
+  textPrimary: '#0f172a',
+  textSecondary: '#1e293b',
+  textMuted: '#475569',
+  textDisabled: '#64748b',
+  textDimmed: '#94a3b8',
+  textFaint: '#cbd5e1',
+  statusAlive: '#16a34a',
+  statusDead: '#e11d48',
+  statusUnknown: '#8b5cf6',
+  error: '#e11d48',
+  overlay: 'rgba(15,23,42,0.70)',
+};
+
+export const darkColors = {
   background: '#060c1a',
   surface: '#0d1e3d',
   surfaceElevated: '#0f2455',
   surfaceDeep: '#07102a',
   border: '#1e3a6e',
-
   accent: '#39ff14',
   accentDim: '#1a8a06',
   accentBlue: '#00d4ff',
-
   textPrimary: '#f0f8ff',
   textSecondary: '#a8c8e8',
   textMuted: '#5a7a9a',
   textDisabled: '#3a5a7a',
   textDimmed: '#2a4060',
   textFaint: '#1a2e48',
-
   statusAlive: '#39ff14',
   statusDead: '#ff4444',
   statusUnknown: '#8899aa',
-
   error: '#ff4444',
   overlay: 'rgba(6,12,26,0.88)',
 };
@@ -59,7 +77,24 @@ export const radii = {
   full: 9999,
 };
 
-export const shadows = {
+export const lightShadows = {
+  card: {
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.14,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  accent: {
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+};
+
+export const darkShadows = {
   card: {
     shadowColor: '#39ff14',
     shadowOffset: { width: 0, height: 0 },
@@ -86,8 +121,3 @@ export const layout = {
   headerHeight: 60,
 };
 
-export const statusColors: Record<string, string> = {
-  Alive: colors.statusAlive,
-  Dead: colors.statusDead,
-  unknown: colors.statusUnknown,
-};
