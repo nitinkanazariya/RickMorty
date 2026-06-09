@@ -1,37 +1,33 @@
-import { open } from '@op-engineering/op-sqlite';
-import type { OPSQLiteConnection } from '@op-engineering/op-sqlite';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Character } from '../types/api';
 
-let db: OPSQLiteConnection | null = null;
+const FAVOURITES_KEY = 'favourites';
 
-function getDb(): OPSQLiteConnection {
-  if (!db) {
-    db = open({ name: 'rickmorty.db' });
+export const initDatabase = async (): Promise<void> => {
+  const existing = await AsyncStorage.getItem(FAVOURITES_KEY);
+  if (existing === null) {
+    await AsyncStorage.setItem(FAVOURITES_KEY, JSON.stringify([]));
   }
-  return db;
-}
-
-export const initDatabase = () => {
-  getDb().execute(`
-    CREATE TABLE IF NOT EXISTS favourites (
-      id INTEGER PRIMARY KEY,
-      data TEXT NOT NULL
-    )
-  `);
 };
 
 export const getAllFavourites = async (): Promise<Character[]> => {
-  const result = getDb().execute('SELECT data FROM favourites');
-  return (result.rows ?? []).map(row => JSON.parse(row.data as string) as Character);
+  const data = await AsyncStorage.getItem(FAVOURITES_KEY);
+  if (!data) return [];
+  return JSON.parse(data) as Character[];
 };
 
 export const insertFavourite = async (character: Character): Promise<void> => {
-  getDb().execute('INSERT OR REPLACE INTO favourites (id, data) VALUES (?, ?)', [
-    character.id,
-    JSON.stringify(character),
-  ]);
+  const current = await getAllFavourites();
+  const exists = current.some(c => c.id === character.id);
+  if (!exists) {
+    await AsyncStorage.setItem(FAVOURITES_KEY, JSON.stringify([...current, character]));
+  }
 };
 
 export const removeFavourite = async (id: number): Promise<void> => {
-  getDb().execute('DELETE FROM favourites WHERE id = ?', [id]);
+  const current = await getAllFavourites();
+  await AsyncStorage.setItem(
+    FAVOURITES_KEY,
+    JSON.stringify(current.filter(c => c.id !== id)),
+  );
 };

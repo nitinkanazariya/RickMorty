@@ -20,8 +20,9 @@ const queryClient = new QueryClient({
 
 function AppProviders() {
   useEffect(() => {
-    initDatabase();
-    store.dispatch(loadFavourites());
+    initDatabase().then(() => {
+      store.dispatch(loadFavourites());
+    });
   }, []);
 
   return (

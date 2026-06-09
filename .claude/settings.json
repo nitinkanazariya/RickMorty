@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(yarn install *)",
+      "Bash(git -C /Users/woakescrish/RickMorty add README.md yarn.lock)",
+      "Bash(git -C /Users/woakescrish/RickMorty commit -m \"chore: update README to use yarn commands and add yarn.lock\")",
+      "Bash(git -C /Users/woakescrish/RickMorty add -A)",
+      "Bash(git -C /Users/woakescrish/RickMorty commit -m \"fix: replace op-sqlite with AsyncStorage for persistence\")"
+    ]
+  }
+}
