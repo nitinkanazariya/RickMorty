@@ -81,11 +81,12 @@ export default function LocationDetailScreen() {
   const avatarSize = layout.residentColumns >= 5 ? 64 : 80;
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <TouchableOpacity style={[styles.backBtn, { paddingTop: insets.top + spacing.sm }]} onPress={() => navigation.goBack()}>
+    <View style={styles.container}>
+      <TouchableOpacity style={[styles.backBtn, { paddingTop: insets.top + spacing.sm, backgroundColor: colors.background }]} onPress={() => navigation.goBack()}>
         <ChevronLeftIcon size={20} color={colors.accent} />
         <Text style={styles.backText}>{strings.common.back}</Text>
       </TouchableOpacity>
+      <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.infoCard}>
         <Text style={styles.name}>{location.name}</Text>
         <Text style={styles.type}>{location.type}</Text>
@@ -114,6 +115,7 @@ export default function LocationDetailScreen() {
           />
         </>
       )}
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }

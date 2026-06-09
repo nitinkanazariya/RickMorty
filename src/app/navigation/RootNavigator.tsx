@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   UserGroupIcon, FilmIcon, GlobeAltIcon, StarIcon,
 } from 'react-native-heroicons/outline';
@@ -11,6 +14,8 @@ import {
   StarIcon as StarIconSolid,
 } from 'react-native-heroicons/solid';
 import { useTheme } from '../../theme/ThemeContext';
+import { useTabBar } from '../../context/TabBarContext';
+import { layout } from '../../theme';
 import type { RootTabParamList, CharacterStackParamList, LocationStackParamList } from '../../types/navigation';
 import CharacterListScreen from '../../features/characters/screens/CharacterListScreen';
 import CharacterDetailScreen from '../../features/characters/screens/CharacterDetailScreen';
@@ -41,32 +46,119 @@ function LocationStackNavigator() {
   );
 }
 
-const ICON_SIZE = 22;
+const ICON_SIZE = 24;
 
-export default function RootNavigator() {
-  const { colors } = useTheme();
+const TAB_ICONS: Record<string, { outline: React.FC<any>; solid: React.FC<any> }> = {
+  Characters: { outline: UserGroupIcon, solid: UserGroupIconSolid },
+  Episodes:   { outline: FilmIcon,      solid: FilmIconSolid      },
+  Locations:  { outline: GlobeAltIcon,  solid: GlobeAltIconSolid  },
+  Favourites: { outline: StarIcon,      solid: StarIconSolid      },
+};
+
+function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
+  const { colors, shadows } = useTheme();
+  const { tabBarTranslate } = useTabBar();
+  const insets = useSafeAreaInsets();
+
+  const scales = useRef(state.routes.map(() => new Animated.Value(1))).current;
+
+  const handlePress = (route: typeof state.routes[number], index: number, focused: boolean) => {
+    Animated.sequence([
+      Animated.spring(scales[index], {
+        toValue: 1.35,
+        useNativeDriver: true,
+        friction: 4,
+        tension: 300,
+      }),
+      Animated.spring(scales[index], {
+        toValue: 1,
+        useNativeDriver: true,
+        friction: 5,
+        tension: 200,
+      }),
+    ]).start();
+
+    const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+    if (!focused && !event.defaultPrevented) navigation.navigate(route.name as any);
+  };
 
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarStyle: {
+    <Animated.View
+      style={[
+        styles.bar,
+        shadows.card,
+        {
+          height: layout.tabBarHeight + insets.bottom + 10,
+          paddingBottom: insets.bottom,
+          paddingTop: 10,
           backgroundColor: colors.surfaceElevated,
-          borderTopColor: colors.accent + '55',
-          borderTopWidth: 1.5,
-          height: 60,
-          paddingBottom: 8,
+          transform: [{ translateY: tabBarTranslate }],
         },
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: colors.textDisabled,
-        tabBarIcon: ({ focused, color }) => {
-          const props = { size: ICON_SIZE, color };
-          if (route.name === 'Characters') return focused ? <UserGroupIconSolid {...props} /> : <UserGroupIcon {...props} />;
-          if (route.name === 'Episodes') return focused ? <FilmIconSolid {...props} /> : <FilmIcon {...props} />;
-          if (route.name === 'Locations') return focused ? <GlobeAltIconSolid {...props} /> : <GlobeAltIcon {...props} />;
-          return focused ? <StarIconSolid {...props} /> : <StarIcon {...props} />;
-        },
-      })}>
+      ]}
+    >
+      {state.routes.map((route, index) => {
+        const focused = state.index === index;
+        const meta = TAB_ICONS[route.name];
+        const Icon = focused ? meta.solid : meta.outline;
+        const color = focused ? colors.accent : colors.textMuted;
+
+        return (
+          <TouchableOpacity
+            key={route.key}
+            style={styles.item}
+            onPress={() => handlePress(route, index, focused)}
+            activeOpacity={0.7}
+          >
+            <Animated.View
+              style={[
+                styles.iconWrap,
+                focused && { backgroundColor: colors.accent + '18' },
+                { transform: [{ scale: scales[index] }] },
+              ]}
+            >
+              <Icon size={ICON_SIZE} color={color} />
+            </Animated.View>
+            {focused && <View style={[styles.dot, { backgroundColor: colors.accent }]} />}
+          </TouchableOpacity>
+        );
+      })}
+    </Animated.View>
+  );
+}
+
+const styles = StyleSheet.create({
+  bar: {
+    position: 'absolute',
+    bottom: 0, left: 0, right: 0,
+    flexDirection: 'row',
+    overflow: 'hidden',
+  },
+  item: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  iconWrap: {
+    width: 48,
+    height: 40,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    marginTop: 4,
+  },
+});
+
+export default function RootNavigator() {
+  return (
+    <Tab.Navigator
+      tabBar={(props) => <AnimatedTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
+    >
       <Tab.Screen name="Characters" component={CharacterStackNavigator} />
       <Tab.Screen name="Episodes" component={EpisodeListScreen} />
       <Tab.Screen name="Locations" component={LocationStackNavigator} />

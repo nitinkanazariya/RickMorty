@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AdjustmentsHorizontalIcon, MoonIcon, SunIcon } from 'react-native-heroicons/outline';
 import { useTheme } from '../../../theme/ThemeContext';
-import type { Colors, Shadows } from '../../../theme/ThemeContext';
+import type { Colors } from '../../../theme/ThemeContext';
 import { fetchCharacters } from '../../../services/characterService';
 import useDebounce from '../../../hooks/useDebounce';
 import useScrollHeader from '../../../hooks/useScrollHeader';
@@ -21,10 +21,11 @@ import { typography, spacing, radii } from '../../../theme';
 import type { CharacterStackParamList } from '../../../types/navigation';
 import type { Character } from '../../../types/api';
 import { strings } from '../../../constants/strings';
+import { useTabBar } from '../../../context/TabBarContext';
 
 type NavProp = NativeStackNavigationProp<CharacterStackParamList, 'CharacterList'>;
 
-function makeStyles(c: Colors, s: Shadows) {
+function makeStyles(c: Colors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: c.background },
     statusBarBg: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 11, backgroundColor: c.surfaceElevated },
@@ -58,13 +59,17 @@ function makeStyles(c: Colors, s: Shadows) {
 export default function CharacterListScreen() {
   const navigation = useNavigation<NavProp>();
   const dispatch = useAppDispatch();
-  const { colors, shadows, isDark, toggleTheme } = useTheme();
-  const styles = useMemo(() => makeStyles(colors, shadows), [colors, shadows]);
+  const { colors, isDark, toggleTheme } = useTheme();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const { status, gender } = useAppSelector(s => s.ui.characterFilters);
   const [searchText, setSearchText] = useState('');
   const [showFilter, setShowFilter] = useState(false);
   const debouncedSearch = useDebounce(searchText, 300);
   const { headerTranslate, onScroll, onScrollEnd, HEADER_HEIGHT, topInset } = useScrollHeader();
+  const { onTabBarScroll, onTabBarScrollEnd, totalTabBarHeight } = useTabBar();
+
+  const handleScroll = useCallback((e: any) => { onScroll(e); onTabBarScroll(e); }, [onScroll, onTabBarScroll]);
+  const handleScrollEnd = useCallback((e: any) => { onScrollEnd(e); onTabBarScrollEnd(e); }, [onScrollEnd, onTabBarScrollEnd]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useInfiniteQuery({
@@ -134,10 +139,10 @@ export default function CharacterListScreen() {
           onEndReachedThreshold={0.4}
           ListFooterComponent={renderFooter}
           ListEmptyComponent={renderEmpty}
-          contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingHorizontal: spacing.md }}
-          onScroll={onScroll}
-          onScrollEndDrag={onScrollEnd}
-          onMomentumScrollEnd={onScrollEnd}
+          contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingBottom: totalTabBarHeight + 8, paddingHorizontal: spacing.md }}
+          onScroll={handleScroll}
+          onScrollEndDrag={handleScrollEnd}
+          onMomentumScrollEnd={handleScrollEnd}
           scrollEventThrottle={16}
         />
       )}

@@ -14,6 +14,7 @@ import EpisodeSkeleton from '../components/EpisodeSkeleton';
 import { typography, spacing, radii, layout } from '../../../theme';
 import type { Episode, Character } from '../../../types/api';
 import { strings } from '../../../constants/strings';
+import { useTabBar } from '../../../context/TabBarContext';
 
 function makeStyles(c: Colors, s: Shadows) {
   return StyleSheet.create({
@@ -119,6 +120,10 @@ export default function EpisodeListScreen() {
   const { colors, shadows, isDark, toggleTheme } = useTheme();
   const styles = useMemo(() => makeStyles(colors, shadows), [colors, shadows]);
   const { headerTranslate, onScroll, onScrollEnd, HEADER_HEIGHT, topInset } = useScrollHeader();
+  const { onTabBarScroll, onTabBarScrollEnd, totalTabBarHeight } = useTabBar();
+
+  const handleScroll = useCallback((e: any) => { onScroll(e); onTabBarScroll(e); }, [onScroll, onTabBarScroll]);
+  const handleScrollEnd = useCallback((e: any) => { onScrollEnd(e); onTabBarScrollEnd(e); }, [onScrollEnd, onTabBarScrollEnd]);
   const [selectedSeason, setSelectedSeason] = useState('S01');
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
@@ -191,11 +196,11 @@ export default function EpisodeListScreen() {
           renderItem={({ item }) => <EpisodeRow episode={item} styles={styles} />}
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.4}
-          onScroll={onScroll}
-          onScrollEndDrag={onScrollEnd}
-          onMomentumScrollEnd={onScrollEnd}
+          onScroll={handleScroll}
+          onScrollEndDrag={handleScrollEnd}
+          onMomentumScrollEnd={handleScrollEnd}
           scrollEventThrottle={16}
-          contentContainerStyle={{ paddingTop: FULL_HEADER + 8 }}
+          contentContainerStyle={{ paddingTop: FULL_HEADER + 8, paddingBottom: totalTabBarHeight + 8 }}
           ListFooterComponent={isFetchingNextPage ? <EpisodeSkeleton footer /> : null}
         />
       )}

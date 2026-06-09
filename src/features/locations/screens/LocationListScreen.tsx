@@ -15,6 +15,7 @@ import { typography, spacing, radii, layout } from '../../../theme';
 import type { LocationStackParamList } from '../../../types/navigation';
 import type { Location } from '../../../types/api';
 import { strings } from '../../../constants/strings';
+import { useTabBar } from '../../../context/TabBarContext';
 
 type NavProp = NativeStackNavigationProp<LocationStackParamList, 'LocationList'>;
 
@@ -61,6 +62,10 @@ export default function LocationListScreen() {
   const { colors, shadows, isDark, toggleTheme } = useTheme();
   const styles = useMemo(() => makeStyles(colors, shadows), [colors, shadows]);
   const { headerTranslate, onScroll, onScrollEnd, HEADER_HEIGHT, topInset } = useScrollHeader();
+  const { onTabBarScroll, onTabBarScrollEnd, totalTabBarHeight } = useTabBar();
+
+  const handleScroll = useCallback((e: any) => { onScroll(e); onTabBarScroll(e); }, [onScroll, onTabBarScroll]);
+  const handleScrollEnd = useCallback((e: any) => { onScrollEnd(e); onTabBarScrollEnd(e); }, [onScrollEnd, onTabBarScrollEnd]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
     useInfiniteQuery({
@@ -114,14 +119,14 @@ export default function LocationListScreen() {
           renderItem={renderItem}
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.4}
-          onScroll={onScroll}
-          onScrollEndDrag={onScrollEnd}
-          onMomentumScrollEnd={onScrollEnd}
+          onScroll={handleScroll}
+          onScrollEndDrag={handleScrollEnd}
+          onMomentumScrollEnd={handleScrollEnd}
           scrollEventThrottle={16}
           numColumns={layout.locationColumns}
           key={`loc-${layout.locationColumns}`}
           columnWrapperStyle={layout.locationColumns > 1 ? styles.row : undefined}
-          contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingHorizontal: spacing.md }}
+          contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingBottom: totalTabBarHeight + 8, paddingHorizontal: spacing.md }}
           ListFooterComponent={isFetchingNextPage ? <LocationSkeleton footer /> : null}
         />
       )}

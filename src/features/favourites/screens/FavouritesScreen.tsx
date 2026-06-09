@@ -13,6 +13,7 @@ import { typography, spacing, radii, layout } from '../../../theme';
 import type { Character } from '../../../types/api';
 import type { RootTabParamList } from '../../../types/navigation';
 import { strings } from '../../../constants/strings';
+import { useTabBar } from '../../../context/TabBarContext';
 
 type NavProp = NavigationProp<RootTabParamList>;
 
@@ -58,6 +59,7 @@ export default function FavouritesScreen() {
   const navigation = useNavigation<NavProp>();
   const { colors, shadows, isDark, toggleTheme } = useTheme();
   const styles = useMemo(() => makeStyles(colors, shadows), [colors, shadows]);
+  const { onTabBarScroll, onTabBarScrollEnd, totalTabBarHeight } = useTabBar();
   const dispatch = useAppDispatch();
   const favourites = useAppSelector(s => s.favourites.items);
   const statusColorMap = { Alive: colors.statusAlive, Dead: colors.statusDead, unknown: colors.statusUnknown };
@@ -112,7 +114,11 @@ export default function FavouritesScreen() {
           data={favourites}
           keyExtractor={item => String(item.id)}
           renderItem={renderItem}
-          contentContainerStyle={styles.list}
+          onScroll={onTabBarScroll}
+          onScrollEndDrag={onTabBarScrollEnd}
+          onMomentumScrollEnd={onTabBarScrollEnd}
+          scrollEventThrottle={16}
+          contentContainerStyle={[styles.list, { paddingBottom: totalTabBarHeight + 8 }]}
         />
       )}
     </View>

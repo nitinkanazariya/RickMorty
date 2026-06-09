@@ -119,5 +119,6 @@ export const layout = {
   detailAvatarSize: isTablet ? 230 : 180,
   episodeChipWidth: isTablet ? 160 : 130,
   headerHeight: 60,
+  tabBarHeight: 50,
 };
 

@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StatusBar } from 'react-native';
+import SplashScreen from './src/components/SplashScreen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,6 +10,7 @@ import { initDatabase } from './src/utils/database';
 import { loadFavourites } from './src/store/slices/favouritesSlice';
 import RootNavigator from './src/app/navigation/RootNavigator';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
+import { TabBarProvider } from './src/context/TabBarContext';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 2, staleTime: 1000 * 60 * 5 } },
@@ -28,24 +30,29 @@ function AppContent() {
   }, [isDark]);
 
   return (
-    <NavigationContainer theme={navTheme}>
-      <StatusBar
-        barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={colors.surfaceElevated}
-        translucent={false}
-      />
-      <RootNavigator />
-    </NavigationContainer>
+    <TabBarProvider>
+      <NavigationContainer theme={navTheme}>
+        <StatusBar
+          barStyle={isDark ? 'light-content' : 'dark-content'}
+          backgroundColor={colors.surfaceElevated}
+          translucent={false}
+        />
+        <RootNavigator />
+      </NavigationContainer>
+    </TabBarProvider>
   );
 }
 
 function App() {
+  const [splashDone, setSplashDone] = useState(false);
+
   return (
     <SafeAreaProvider>
       <ThemeProvider>
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
             <AppContent />
+            {!splashDone && <SplashScreen onFinish={() => setSplashDone(true)} />}
           </QueryClientProvider>
         </Provider>
       </ThemeProvider>

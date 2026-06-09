@@ -107,23 +107,22 @@ export default function CharacterDetailScreen() {
   const avatarSize = layout.detailAvatarSize;
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Animated.View style={[headerAnim, { paddingTop: insets.top + spacing.sm }]}>
-        <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-            <ChevronLeftIcon size={20} color={colors.accent} />
-            <Text style={styles.backText}>{strings.common.back}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={toggleFavourite} style={styles.starBtn}>
-            <Animated.View style={{ transform: [{ scale: starScale }] }}>
-              {isFavourite
-                ? <StarIconSolid size={28} color={colors.accent} />
-                : <StarIcon size={28} color={colors.textDisabled} />}
-            </Animated.View>
-          </TouchableOpacity>
-        </View>
-      </Animated.View>
+    <View style={styles.container}>
+      <View style={[styles.topBar, { paddingTop: insets.top + spacing.sm, backgroundColor: colors.background }]}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <ChevronLeftIcon size={20} color={colors.accent} />
+          <Text style={styles.backText}>{strings.common.back}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={toggleFavourite} style={styles.starBtn}>
+          <Animated.View style={{ transform: [{ scale: starScale }] }}>
+            {isFavourite
+              ? <StarIconSolid size={28} color={colors.accent} />
+              : <StarIcon size={28} color={colors.textDisabled} />}
+          </Animated.View>
+        </TouchableOpacity>
+      </View>
 
+      <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.imageWrapper}>
         <SharedView sharedTransitionTag={`char-img-${id}`} style={[styles.avatarRing, { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }]}>
           <Image source={{ uri: image }} style={{ width: avatarSize, height: avatarSize }} />
@@ -169,6 +168,7 @@ export default function CharacterDetailScreen() {
           </>
         )}
       </Animated.View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
