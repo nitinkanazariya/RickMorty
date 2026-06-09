@@ -12,6 +12,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackScreenProps, NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { fetchLocationById } from '../../../services/locationService';
 import { fetchCharactersByIds } from '../../../services/characterService';
 import { colors, typography, spacing, radii, layout } from '../../../theme';
@@ -63,7 +64,8 @@ export default function LocationDetailScreen() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-        <Text style={styles.backText}>← Back</Text>
+        <ChevronLeftIcon size={20} color={colors.accent} />
+        <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
 
       <View style={styles.infoCard}>
@@ -96,7 +98,7 @@ export default function LocationDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
-  backBtn: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
+  backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
   backText: { color: colors.accent, fontSize: typography.lg },
   infoCard: {
     margin: spacing.lg,

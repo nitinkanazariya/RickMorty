@@ -1,7 +1,20 @@
 import React, { Suspense, lazy } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import {
+  UserGroupIcon,
+  FilmIcon,
+  GlobeAltIcon,
+  StarIcon,
+} from 'react-native-heroicons/outline';
+import {
+  UserGroupIcon as UserGroupIconSolid,
+  FilmIcon as FilmIconSolid,
+  GlobeAltIcon as GlobeAltIconSolid,
+  StarIcon as StarIconSolid,
+} from 'react-native-heroicons/solid';
+import { colors } from '../../theme';
 import type { RootTabParamList, CharacterStackParamList, LocationStackParamList } from '../../types/navigation';
 
 const CharacterListScreen = lazy(() => import('../../features/characters/screens/CharacterListScreen'));
@@ -15,17 +28,10 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 const CharacterStack = createNativeStackNavigator<CharacterStackParamList>();
 const LocationStack = createNativeStackNavigator<LocationStackParamList>();
 
-const TAB_ICONS: Record<string, string> = {
-  Characters: '👾',
-  Episodes: '🎬',
-  Locations: '🌍',
-  Favourites: '⭐',
-};
-
 function FallbackLoader() {
   return (
     <View style={styles.loader}>
-      <ActivityIndicator size="large" color="#00b4d8" />
+      <ActivityIndicator size="large" color={colors.accent} />
     </View>
   );
 }
@@ -72,19 +78,29 @@ function LocationStackNavigator() {
   );
 }
 
+const ICON_SIZE = 22;
+
 export default function RootNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: '#00b4d8',
-        tabBarInactiveTintColor: '#6b7280',
-        tabBarIcon: ({ focused }) => (
-          <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>
-            {TAB_ICONS[route.name]}
-          </Text>
-        ),
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.textDisabled,
+        tabBarIcon: ({ focused, color }) => {
+          const props = { size: ICON_SIZE, color };
+          if (route.name === 'Characters') {
+            return focused ? <UserGroupIconSolid {...props} /> : <UserGroupIcon {...props} />;
+          }
+          if (route.name === 'Episodes') {
+            return focused ? <FilmIconSolid {...props} /> : <FilmIcon {...props} />;
+          }
+          if (route.name === 'Locations') {
+            return focused ? <GlobeAltIconSolid {...props} /> : <GlobeAltIcon {...props} />;
+          }
+          return focused ? <StarIconSolid {...props} /> : <StarIcon {...props} />;
+        },
       })}>
       <Tab.Screen name="Characters" component={CharacterStackNavigator} />
       <Tab.Screen name="Episodes">
@@ -111,11 +127,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0f0f1a',
+    backgroundColor: colors.background,
   },
   tabBar: {
-    backgroundColor: '#1a1a2e',
-    borderTopColor: '#16213e',
+    backgroundColor: colors.surfaceElevated,
+    borderTopColor: colors.surface,
     height: 60,
     paddingBottom: 8,
   },

@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import { StarIcon, XMarkIcon } from 'react-native-heroicons/outline';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useAppDispatch';
 import { removeFavouriteById } from '../../../store/slices/favouritesSlice';
 import { colors, typography, spacing, radii, layout, statusColors } from '../../../theme';
@@ -26,7 +27,7 @@ export default function FavouritesScreen() {
   if (favourites.length === 0) {
     return (
       <View style={styles.empty}>
-        <Text style={styles.emptyIcon}>☆</Text>
+        <StarIcon size={64} color={colors.textFaint} />
         <Text style={styles.emptyTitle}>No favourites yet</Text>
         <Text style={styles.emptySubtitle}>Tap the save button on any character to add them here</Text>
       </View>
@@ -45,7 +46,7 @@ export default function FavouritesScreen() {
         <Text style={styles.location} numberOfLines={1}>{item.location.name}</Text>
       </View>
       <TouchableOpacity style={styles.removeBtn} onPress={() => handleRemove(item.id)}>
-        <Text style={styles.removeText}>✕</Text>
+        <XMarkIcon size={20} color={colors.error} />
       </TouchableOpacity>
     </View>
   );
@@ -90,7 +91,6 @@ const styles = StyleSheet.create({
   statusText: { color: colors.textMuted, fontSize: typography.sm },
   location: { color: colors.textDisabled, fontSize: typography.sm },
   removeBtn: { padding: spacing.lg },
-  removeText: { color: colors.error, fontSize: typography.lg, fontWeight: '700' },
   empty: {
     flex: 1,
     justifyContent: 'center',
@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     padding: spacing.xxxl,
   },
-  emptyIcon: { fontSize: 64, color: colors.textFaint, marginBottom: spacing.lg },
   emptyTitle: { color: colors.textMuted, fontSize: typography.xxl, fontWeight: '700', marginBottom: spacing.sm },
   emptySubtitle: { color: colors.textDimmed, fontSize: typography.base, textAlign: 'center' },
 });

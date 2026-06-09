@@ -12,6 +12,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ChevronLeftIcon, StarIcon } from 'react-native-heroicons/outline';
+import { StarIcon as StarIconSolid } from 'react-native-heroicons/solid';
 import { fetchCharacterById } from '../../../services/characterService';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useAppDispatch';
 import { addFavourite, removeFavouriteById } from '../../../store/slices/favouritesSlice';
@@ -67,7 +69,8 @@ export default function CharacterDetailScreen() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-        <Text style={styles.backText}>← Back</Text>
+        <ChevronLeftIcon size={20} color={colors.accent} />
+        <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
 
       <View style={styles.imageWrapper}>
@@ -84,7 +87,12 @@ export default function CharacterDetailScreen() {
       <TouchableOpacity
         style={[styles.favBtn, isFavourite && styles.favBtnActive]}
         onPress={toggleFavourite}>
-        <Text style={styles.favBtnText}>{isFavourite ? '★ Saved' : '☆ Save'}</Text>
+        {isFavourite
+          ? <StarIconSolid size={18} color={colors.textPrimary} />
+          : <StarIcon size={18} color={colors.accent} />}
+        <Text style={[styles.favBtnText, isFavourite && styles.favBtnTextActive]}>
+          {isFavourite ? 'Saved' : 'Save'}
+        </Text>
       </TouchableOpacity>
 
       <View style={styles.infoCard}>
@@ -127,12 +135,15 @@ export default function CharacterDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
-  backBtn: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
+  backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
   backText: { color: colors.accent, fontSize: typography.lg },
   imageWrapper: { alignItems: 'center', marginVertical: spacing.lg },
   imagePlaceholder: { backgroundColor: colors.surface, position: 'absolute' },
   avatar: { borderWidth: 3, borderColor: colors.accent },
   favBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     alignSelf: 'center',
     paddingHorizontal: 28,
     paddingVertical: 10,
@@ -142,8 +153,9 @@ const styles = StyleSheet.create({
     borderColor: colors.accent,
     marginBottom: spacing.xl,
   },
-  favBtnActive: { backgroundColor: colors.accent },
-  favBtnText: { color: colors.textPrimary, fontWeight: '700', fontSize: typography.md },
+  favBtnActive: { backgroundColor: colors.accent, borderColor: colors.accent },
+  favBtnText: { color: colors.accent, fontWeight: '700', fontSize: typography.md },
+  favBtnTextActive: { color: colors.textPrimary },
   infoCard: {
     marginHorizontal: spacing.lg,
     backgroundColor: colors.surface,
