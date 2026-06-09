@@ -31,11 +31,14 @@ export const strings = {
     errorLoadDetail: 'Failed to load location',
     residents: (count: number) => `${count} residents`,
     residentsSection: 'Residents',
+    noResidents: 'No residents in this location',
   },
   favourites: {
     title: 'Favourites',
     emptyTitle: 'No favourites yet',
     emptySubtitle: 'Tap the star on any character to add them here',
+    toastAdded: 'Added to Favourites',
+    toastRemoved: 'Removed from Favourites',
   },
   filter: {
     title: 'Filter Characters',

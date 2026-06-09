@@ -11,6 +11,7 @@ import { loadFavourites } from './src/store/slices/favouritesSlice';
 import RootNavigator from './src/app/navigation/RootNavigator';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 import { TabBarProvider } from './src/context/TabBarContext';
+import { ToastProvider } from './src/context/ToastContext';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 2, staleTime: 1000 * 60 * 5 } },
@@ -51,8 +52,10 @@ function App() {
       <ThemeProvider>
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
-            <AppContent />
-            {!splashDone && <SplashScreen onFinish={() => setSplashDone(true)} />}
+            <ToastProvider>
+              <AppContent />
+              {!splashDone && <SplashScreen onFinish={() => setSplashDone(true)} />}
+            </ToastProvider>
           </QueryClientProvider>
         </Provider>
       </ThemeProvider>

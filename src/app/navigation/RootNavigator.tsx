@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Animated, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
@@ -23,6 +23,7 @@ import EpisodeListScreen from '../../features/episodes/screens/EpisodeListScreen
 import LocationListScreen from '../../features/locations/screens/LocationListScreen';
 import LocationDetailScreen from '../../features/locations/screens/LocationDetailScreen';
 import FavouritesScreen from '../../features/favourites/screens/FavouritesScreen';
+import { styles } from './RootNavigator.style';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const CharacterStack = createNativeStackNavigator<CharacterStackParamList>();
@@ -88,9 +89,9 @@ function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
         styles.bar,
         shadows.card,
         {
-          height: layout.tabBarHeight + insets.bottom + 10,
-          paddingBottom: insets.bottom,
-          paddingTop: 10,
+          height: layout.tabBarHeight + insets.bottom + (Platform.OS === 'android' ? 24 : 10),
+          paddingBottom: Platform.OS === 'android' ? 10 : insets.bottom,
+          paddingTop: Platform.OS === 'android' ? 14 : 10,
           backgroundColor: colors.surfaceElevated,
           transform: [{ translateY: tabBarTranslate }],
         },
@@ -125,33 +126,6 @@ function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  bar: {
-    position: 'absolute',
-    bottom: 0, left: 0, right: 0,
-    flexDirection: 'row',
-    overflow: 'hidden',
-  },
-  item: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  iconWrap: {
-    width: 48,
-    height: 40,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    marginTop: 4,
-  },
-});
 
 export default function RootNavigator() {
   return (

@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, Image, ScrollView, TouchableOpacity,
-  StyleSheet, FlatList, Animated,
+  FlatList, Animated,
 } from 'react-native';
+import { useToast } from '../../../context/ToastContext';
 import { useQuery } from '@tanstack/react-query';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -10,53 +11,20 @@ import { ChevronLeftIcon, StarIcon } from 'react-native-heroicons/outline';
 import { StarIcon as StarIconSolid } from 'react-native-heroicons/solid';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeContext';
-import type { Colors } from '../../../theme/ThemeContext';
 import { fetchCharacterById } from '../../../services/characterService';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useAppDispatch';
 import { addFavourite, removeFavouriteById } from '../../../store/slices/favouritesSlice';
 import EpisodeChip from '../components/EpisodeChip';
 import CharacterDetailSkeleton from '../components/CharacterDetailSkeleton';
-import { typography, spacing, radii, layout } from '../../../theme';
+import { spacing, layout } from '../../../theme';
 import type { CharacterStackParamList } from '../../../types/navigation';
 import { strings } from '../../../constants/strings';
+import { makeStyles } from './CharacterDetailScreen.style';
 
 type RouteProp = NativeStackScreenProps<CharacterStackParamList, 'CharacterDetail'>['route'];
 type NavProp = NativeStackNavigationProp<CharacterStackParamList>;
 
 const SharedView = View as React.ComponentType<React.ComponentProps<typeof View> & { sharedTransitionTag?: string }>;
-
-function makeStyles(c: Colors) {
-  return StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.background },
-    centered: { justifyContent: 'center', alignItems: 'center', paddingVertical: spacing.xxxl },
-    topBar: {
-      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-      paddingHorizontal: spacing.lg, paddingBottom: spacing.sm,
-    },
-    backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-    backText: { color: c.accent, fontSize: typography.lg },
-    starBtn: { padding: spacing.sm },
-    imageWrapper: { alignItems: 'center', marginVertical: spacing.lg },
-    avatarRing: { overflow: 'hidden', borderWidth: 3, borderColor: c.accent },
-    infoCard: {
-      marginHorizontal: spacing.lg, backgroundColor: c.surface,
-      borderRadius: radii.xl, padding: spacing.xl, marginBottom: spacing.xl,
-    },
-    characterName: { color: c.textPrimary, fontSize: typography.xxxl, fontWeight: '800', marginBottom: spacing.sm },
-    statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.lg },
-    dot: { width: 10, height: 10, borderRadius: radii.full, marginRight: spacing.sm },
-    statusText: { color: c.textMuted, fontSize: typography.base },
-    grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
-    gridItem: { width: '45%' },
-    gridLabel: { color: c.textDisabled, fontSize: typography.sm, marginBottom: 2 },
-    gridValue: { color: c.textSecondary, fontSize: typography.base, fontWeight: '500' },
-    episodesSection: { marginBottom: spacing.xxxl },
-    sectionTitle: { color: c.textPrimary, fontSize: typography.xl, fontWeight: '700', paddingHorizontal: spacing.lg, marginBottom: spacing.md },
-    errorText: { color: c.error, fontSize: typography.lg, marginBottom: spacing.md },
-    retryBtn: { backgroundColor: c.accent, paddingHorizontal: spacing.xxl, paddingVertical: 10, borderRadius: radii.sm },
-    retryText: { color: c.textPrimary, fontWeight: '600' },
-  });
-}
 
 function useEntrance(delay: number) {
   const opacity = useRef(new Animated.Value(0)).current;
@@ -79,6 +47,7 @@ export default function CharacterDetailScreen() {
   const styles = useMemo(() => makeStyles(colors), [colors]);
   const starScale = useRef(new Animated.Value(1)).current;
   const { id, image, character: cachedCharacter } = route.params;
+  const { showToast } = useToast();
 
   const favourites = useAppSelector(s => s.favourites.items);
   const isFavourite = favourites.some(c => c.id === id);
@@ -97,8 +66,13 @@ export default function CharacterDetailScreen() {
       Animated.timing(starScale, { toValue: 0.85, duration: 80, useNativeDriver: true }),
       Animated.timing(starScale, { toValue: 1, duration: 100, useNativeDriver: true }),
     ]).start();
-    if (isFavourite) dispatch(removeFavouriteById(id));
-    else dispatch(addFavourite(character));
+    const adding = !isFavourite;
+    if (adding) dispatch(addFavourite(character));
+    else dispatch(removeFavouriteById(id));
+    showToast(
+      adding ? strings.favourites.toastAdded : strings.favourites.toastRemoved,
+      adding ? 'add' : 'remove',
+    );
   };
 
   const statusColorMap = { Alive: colors.statusAlive, Dead: colors.statusDead, unknown: colors.statusUnknown };
