@@ -4,29 +4,48 @@ import { useQuery } from '@tanstack/react-query';
 import { useTheme } from '../../../theme/ThemeContext';
 import type { Colors } from '../../../theme/ThemeContext';
 import { fetchEpisodeById } from '../../../services/episodeService';
-import { typography, spacing, radii, layout } from '../../../theme';
+import { typography, spacing, radii } from '../../../theme';
 import type { Episode } from '../../../types/api';
 
 function makeStyles(c: Colors) {
   return StyleSheet.create({
-    chip: {
+    card: {
+      flexDirection: 'row',
+      alignItems: 'center',
       backgroundColor: c.surface,
-      borderRadius: radii.md,
+      borderRadius: radii.lg,
       padding: spacing.md,
-      width: layout.episodeChipWidth,
-      borderWidth: 1.5,
+      marginHorizontal: spacing.lg,
+      marginBottom: spacing.sm,
+      borderWidth: 1,
       borderColor: c.border,
+      gap: spacing.md,
     },
     skeleton: {
-      width: layout.episodeChipWidth,
       height: 56,
       backgroundColor: c.surface,
-      borderRadius: radii.md,
-      borderWidth: 1.5,
+      borderRadius: radii.lg,
+      marginHorizontal: spacing.lg,
+      marginBottom: spacing.sm,
+      borderWidth: 1,
       borderColor: c.border,
     },
-    code: { color: c.accent, fontSize: typography.sm, fontWeight: '800', marginBottom: spacing.xs },
-    name: { color: c.textSecondary, fontSize: typography.sm },
+    badge: {
+      backgroundColor: c.accentDim,
+      borderRadius: radii.sm,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.xs,
+      minWidth: 52,
+      alignItems: 'center',
+    },
+    badgeText: {
+      color: c.accent,
+      fontSize: typography.sm,
+      fontWeight: '800',
+    },
+    info: { flex: 1 },
+    name: { color: c.textPrimary, fontSize: typography.base, fontWeight: '600', marginBottom: 2 },
+    airDate: { color: c.textMuted, fontSize: typography.sm },
   });
 }
 
@@ -44,9 +63,14 @@ export default function EpisodeChip({ url }: { url: string }) {
   if (!data) return <View style={styles.skeleton} />;
 
   return (
-    <View style={styles.chip}>
-      <Text style={styles.code}>{data.episode}</Text>
-      <Text style={styles.name} numberOfLines={1}>{data.name}</Text>
+    <View style={styles.card}>
+      <View style={styles.badge}>
+        <Text style={styles.badgeText}>{data.episode}</Text>
+      </View>
+      <View style={styles.info}>
+        <Text style={styles.name} numberOfLines={1}>{data.name}</Text>
+        <Text style={styles.airDate}>{data.air_date}</Text>
+      </View>
     </View>
   );
 }

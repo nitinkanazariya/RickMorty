@@ -159,10 +159,11 @@ export default function CharacterDetailScreen() {
             <View style={styles.episodesSection}>
               <Text style={styles.sectionTitle}>{strings.characters.episodes(character.episode.length)}</Text>
               <FlatList
-                data={character.episode} horizontal keyExtractor={item => item}
+                data={character.episode}
+                keyExtractor={item => item}
                 renderItem={({ item }) => <EpisodeChip url={item} />}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: 10 }}
+                scrollEnabled={false}
+                contentContainerStyle={{ paddingBottom: spacing.xxxl }}
               />
             </View>
           </>
