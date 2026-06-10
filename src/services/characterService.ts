@@ -8,7 +8,18 @@ export const fetchCharacters = async (page: number, filters: CharacterFilters): 
   if (filters.species) params.species = filters.species;
   if (filters.gender) params.gender = filters.gender;
 
-  const { data } = await apiClient.get<ApiResponse<Character>>('/character', { params });
+  const { data, status } = await apiClient.get<ApiResponse<Character>>('/character', {
+    params,
+    validateStatus: responseStatus => (responseStatus >= 200 && responseStatus < 300) || responseStatus === 404,
+  });
+
+  if (status === 404) {
+    return {
+      info: { count: 0, pages: 0, next: null, prev: null },
+      results: [],
+    };
+  }
+
   return data;
 };
 
