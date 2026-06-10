@@ -66,16 +66,6 @@ export default function CharacterListScreen() {
 
   const renderEmpty = () => {
     if (isLoading) return null;
-    if (isError) {
-      return (
-        <View style={styles.centered}>
-          <Text style={styles.errorText}>{strings.characters.errorLoad}</Text>
-          <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
-            <Text style={styles.retryText}>{strings.common.retry}</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
     return <View style={styles.centered}><Text style={styles.emptyText}>{strings.characters.empty}</Text></View>;
   };
 
@@ -100,6 +90,13 @@ export default function CharacterListScreen() {
 
       {isLoading ? (
         <CharacterSkeleton />
+      ) : isError ? (
+        <View style={styles.centered}>
+          <Text style={styles.errorText}>{strings.characters.errorLoad}</Text>
+          <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
+            <Text style={styles.retryText}>{strings.common.retry}</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
         <FlatList
           data={characters}
@@ -109,7 +106,7 @@ export default function CharacterListScreen() {
           onEndReachedThreshold={0.4}
           ListFooterComponent={renderFooter}
           ListEmptyComponent={renderEmpty}
-          contentContainerStyle={{ paddingTop: HEADER_HEIGHT + 8, paddingBottom: totalTabBarHeight + 8, paddingHorizontal: spacing.md }}
+          contentContainerStyle={[styles.listContent, { paddingTop: HEADER_HEIGHT + 8, paddingBottom: totalTabBarHeight + 8, paddingHorizontal: spacing.md }]}
           onScroll={handleScroll}
           onScrollEndDrag={handleScrollEnd}
           onMomentumScrollEnd={handleScrollEnd}
