@@ -22,7 +22,8 @@ export function makeStyles(c: Colors) {
       justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: c.border,
     },
     footer: { paddingVertical: spacing.lg },
-    centered: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 80 },
+    listContent: { flexGrow: 1 },
+    centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     errorText: { color: c.error, fontSize: typography.lg, marginBottom: spacing.md },
     emptyText: { color: c.textDisabled, fontSize: typography.lg },
     retryBtn: {
