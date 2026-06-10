@@ -27,7 +27,8 @@ function AppContent() {
 
   useEffect(() => {
     StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content', true);
-    initDatabase().then(() => store.dispatch(loadFavourites()));
+    initDatabase();
+    store.dispatch(loadFavourites());
   }, [isDark]);
 
   return (
