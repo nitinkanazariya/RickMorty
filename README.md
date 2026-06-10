@@ -8,7 +8,7 @@ A React Native app built with the [Rick and Morty API](https://rickandmortyapi.c
 - Character detail screen with full info and episode list
 - Episodes grouped by season
 - Locations list with resident character grid
-- Save/remove favourites persisted with AsyncStorage (accessible offline)
+- Save/remove favourites persisted with SQLite (accessible offline)
 - Animated tab bar that hides/shows on scroll
 - Dark / light theme toggle
 - Toast notification system
@@ -23,7 +23,7 @@ A React Native app built with the [Rick and Morty API](https://rickandmortyapi.c
 | @tanstack/react-query | Server state, caching, infinite pagination |
 | Axios | HTTP client |
 | Redux Toolkit | Favourites & UI filter state |
-| @react-native-async-storage/async-storage | Favourites persistence |
+| react-native-quick-sqlite | Favourites persistence (SQLite) |
 | @react-navigation/native | Navigation (stack + bottom tabs) |
 | react-native-heroicons | Icons |
 
@@ -41,7 +41,7 @@ src/
   hooks/            # useDebounce, useScrollHeader, useAppDispatch
   context/          # ThemeContext, TabBarContext, ToastContext
   types/            # TypeScript interfaces (API + navigation)
-  utils/            # AsyncStorage helpers
+  utils/            # SQLite database helpers
   constants/        # App strings
   app/navigation/   # RootNavigator (bottom tabs + nested stacks)
 ```
