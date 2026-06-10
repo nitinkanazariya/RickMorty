@@ -13,6 +13,7 @@ import type { Character } from '../../../types/api';
 import type { RootTabParamList } from '../../../types/navigation';
 import { strings } from '../../../constants/strings';
 import { useTabBar } from '../../../context/TabBarContext';
+import { useToast } from '../../../context/ToastContext';
 import { makeStyles } from './FavouritesScreen.style';
 
 type NavProp = NavigationProp<RootTabParamList>;
@@ -24,10 +25,14 @@ export default function FavouritesScreen() {
   const styles = useMemo(() => makeStyles(colors, shadows), [colors, shadows]);
   const { onTabBarScroll, onTabBarScrollEnd, totalTabBarHeight } = useTabBar();
   const dispatch = useAppDispatch();
+  const { showToast } = useToast();
   const favourites = useAppSelector(s => s.favourites.items);
   const statusColorMap = { Alive: colors.statusAlive, Dead: colors.statusDead, unknown: colors.statusUnknown };
 
-  const handleRemove = useCallback((id: number) => dispatch(removeFavouriteById(id)), [dispatch]);
+  const handleRemove = useCallback((id: number) => {
+    dispatch(removeFavouriteById(id));
+    showToast(strings.favourites.toastRemoved, 'remove');
+  }, [dispatch, showToast]);
 
   const handleOpen = useCallback((item: Character) => {
     navigation.navigate('Characters', {
