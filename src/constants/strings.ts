@@ -5,7 +5,7 @@ export const strings = {
     any: 'Any',
     na: 'N/A',
   },
-  characters: {
+  characters: { 
     searchPlaceholder: 'Search characters...',
     errorLoad: 'Failed to load characters',
     empty: 'No characters found',
